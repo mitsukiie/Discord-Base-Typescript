@@ -1,0 +1,6 @@
+# dependencies (bun install)
+node_modules
+bun.lock
+
+# dotenv environment variable files
+.env
