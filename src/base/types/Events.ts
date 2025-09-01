@@ -1,5 +1,4 @@
 import { ClientEvents } from 'discord.js';
-import { ExtendedClient } from '#base';
 import { RunE } from '#types';
 
 /**

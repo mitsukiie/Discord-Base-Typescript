@@ -3,10 +3,8 @@ import { createCommand } from '#builders';
 
 // Comando simples: /ping
 export default createCommand({
-  data: {
-    name: 'ping',
-    description: 'Responde com pong',
-  },
+  name: 'ping',
+  description: 'Responde com pong',
 
   // Função executada quando o comando é chamado
   async run(interaction) {

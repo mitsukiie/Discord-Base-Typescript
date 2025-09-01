@@ -32,6 +32,7 @@ export async function LoadEvents(): Promise<Event[]> {
         return;
       }
 
+
       // Adiciona o evento na lista
       events.push(event);
     }),

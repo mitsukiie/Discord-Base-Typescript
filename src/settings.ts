@@ -17,9 +17,8 @@ export const settings: Settings = {
 
   bot: {
     token: process.env.TOKEN!, // obrigatório, fornecido no .env
-    clientID: process.env.CLIENT_ID!, // obrigatório, fornecido no .env
 
-    guildID: 'your_guild_id', // necessário se guildCommands for true, fornecido no .env
+    guildID: [], // necessário se guildCommands for true
     guildCommands: false, // Define se os comandos serão registrados apenas no servidor (true) ou globalmente (false)
   },
 };

@@ -13,12 +13,12 @@ import { Command } from '#types';
 export function createCommand(command: Command) {
   // Criamos o builder base com nome e descrição obrigatórios
   const builder = new SlashCommandBuilder()
-    .setName(command.data.name)
-    .setDescription(command.data.description);
+    .setName(command.name)
+    .setDescription(command.description);
 
   // Se o comando tiver opções, adicionamos elas ao builder
-  if (command.data.options) {
-    for (const opt of command.data.options) {
+  if (command.options) {
+    for (const opt of command.options) {
       switch (opt.type) {
         case ApplicationCommandOptionType.String:
           builder.addStringOption(

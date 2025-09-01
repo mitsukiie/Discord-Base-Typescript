@@ -1,5 +1,3 @@
-import { ChatInputCommandInteraction } from 'discord.js';
-import { ExtendedClient } from '#base';
 import { RunS } from '#types';
 
 /**
@@ -9,16 +7,15 @@ import { RunS } from '#types';
  */
 
 export interface Command {
-  data: {
-    // Nome do comando (obrigatório)
-    name: string;
 
-    // Descrição do comando (obrigatório)
-    description: string;
+  // Nome do comando (obrigatório)
+  name: string;
 
-    // Opções do comando (argumentos do slash command)
-    options?: any[];
-  };
+  // Descrição do comando (obrigatório)
+  description: string;
+
+  // Opções do comando (argumentos do slash command)
+  options?: any[];
 
   /**
    * Função que será executada quando o comando for chamado.

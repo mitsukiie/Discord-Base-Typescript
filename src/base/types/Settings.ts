@@ -41,16 +41,10 @@ export interface Settings {
     token: string;
 
     /**
-     * Client ID do bot (obrigatório)
-     * Necessário para registrar os comandos globalmente via API
-     */
-    clientID: string;
-
-    /**
      * Guild ID (obrigatório se guildCommands for true)
      * Necessário para registrar os comandos apenas em um servidor
      */
-    guildID?: string;
+    guildID?: string[];
 
     /**
      * Define se os comandos serão registrados apenas no servidor (guild)

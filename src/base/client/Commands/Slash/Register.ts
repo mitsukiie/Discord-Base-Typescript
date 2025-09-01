@@ -22,6 +22,7 @@ export async function RegisterCommands(client: ExtendedClient) {
     if (settings.terminal.showSlashCommandsRegistred) {
       logger.info(`🔄 Atualizando ${commands.length} comandos (/)...`);
     }
+    
 
     // Faz upload dos comandos para a API do Discord
     if (settings.bot.guildCommands) {
@@ -31,21 +32,40 @@ export async function RegisterCommands(client: ExtendedClient) {
         process.exit(1);
       }
 
-      const result = (await rest.put(Routes.applicationGuildCommands(settings.bot.clientID, settings.bot.guildID),
-       { body: commands }
-      )) as any[];
+      const guilds = settings.bot.guildID;
+
+      const servers = await Promise.all(
+        guilds.map(async (ID) => {
+          try {
+            const result = (await rest.put(
+            Routes.applicationGuildCommands(client.user!.id, ID),
+              { body: commands }
+            )) as any[];
+
+            return { ID, commands: result.length, success: true };
+          } catch (error) {
+            return { ID, success: false };
+          }
+        })
+      );
+
+      const response = {
+        message: "Comandos registrados",
+        servers
+      };
 
       if (settings.terminal.showSlashCommandsRegistred) {
-        logger.success(`✅ Comandos atualizados (guild - ${settings.bot.guildID}): ${result.length}`);
+        logger.info(JSON.stringify(response, null, 2));
       }
+
     } else {
 
-      const result = (await rest.put(Routes.applicationCommands(settings.bot.clientID), {
+      const result = (await rest.put(Routes.applicationCommands(client.user!.id), {
         body: commands,
       })) as any[];
 
       if (settings.terminal.showSlashCommandsRegistred) {
-        logger.success(`✅ Comandos atualizados (global): ${result.length}`);
+        logger.success(`✅ Comandos atualizados: ${result.length}`);
       }
     }
     

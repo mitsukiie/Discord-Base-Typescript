@@ -23,8 +23,8 @@ export class ExtendedClient extends Client {
   // Método principal para iniciar o bot
   public async start() {
     try {
-      // Registra todos os comandos/eventos do bot
-      await RegisterCommands(this);
+
+      // Registra todos os eventos do bot
       await RegisterEvents(this);
 
       if (!settings.bot.token) {
@@ -34,6 +34,9 @@ export class ExtendedClient extends Client {
 
       // Faz login no Discord usando o token definido nas configurações (settings.ts)
       await this.login(settings.bot.token);
+
+      // Registra todos os comandos do bot
+      await RegisterCommands(this);
     } catch (error) {
       // Em caso de erro, mostra no console
       console.error(error);

@@ -13,7 +13,7 @@ export async function LoadCommands(client: ExtendedClient) {
   const commands: any[] = [];
 
   // Caminho da pasta onde ficam os comandos
-  const folders = path.join(__dirname, '..', '..', '..', '..', 'comandos');
+  const folders = path.join(process.cwd(), 'src', 'comandos');
   const categories = readdirSync(folders);
 
   if (settings.terminal.showSlashCommandsFiles) {

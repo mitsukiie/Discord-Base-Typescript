@@ -9,23 +9,22 @@ import { createCommand } from '#builders';
  */
 
 export default createCommand({
-  data: {
-    name: 'ban',
-    description: 'Banir um usuário do servidor',
+  name: 'ban',
+  description: 'Banir um usuário do servidor',
 
-    // Opções (argumentos) que o comando pode receber
-    options: [
-      {
-        name: 'usuário',
-        description: 'Usuário para banir',
+  // Opções (argumentos) que o comando pode receber
+  options: [
+    {
+      name: 'usuário',
+      description: 'Usuário para banir',
 
-        // Tipo da opção (nesse caso, um usuário do Discord)
-        type: ApplicationCommandOptionType.User,
+      // Tipo da opção (nesse caso, um usuário do Discord)
+      type: ApplicationCommandOptionType.User,
 
-        required: false,
-      },
-    ],
-  },
+      required: false,
+    },
+  ],
+  
 
   // Função executada quando o comando é chamado
   async run(interaction) {
