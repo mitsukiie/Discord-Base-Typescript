@@ -5,12 +5,12 @@ import { createCommand } from '#builders';
 export default createCommand({
   name: 'ping',
   description: 'Responde com pong',
+  type: 'ChatInput', // Lembre de passar type para o run funcionar!
 
-  // Função executada quando o comando é chamado
   async run(interaction) {
     await interaction.reply({
       flags: [MessageFlags.Ephemeral],
-      content: '🏓 Pong!',
+      content: '🏓 Pong! ',
     });
   },
 });

@@ -7,7 +7,6 @@ export default createEvent({
   // Nome do evento
   name: Events.ClientReady,
 
-  // Função executada quando o bot está pronto
   async run(interaction, client) {
     logger.success(`Bot iniciado como ${client.user?.tag}!`);
   },

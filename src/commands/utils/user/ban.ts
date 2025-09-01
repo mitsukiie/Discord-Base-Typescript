@@ -5,12 +5,12 @@ import { createCommand } from '#builders';
  * Comando /user info (dentro da categoria "user")
  *
  * Demonstra como criar um subcomando com argumento de usuário
- * usando o helper `createCommand`.
  */
 
 export default createCommand({
   name: 'ban',
   description: 'Banir um usuário do servidor',
+  type: 'ChatInput', // Lembre de passar type para o run funcionar!
 
   // Opções (argumentos) que o comando pode receber
   options: [
@@ -24,14 +24,11 @@ export default createCommand({
       required: false,
     },
   ],
-  
 
-  // Função executada quando o comando é chamado
-  async run(interaction) {
+  async run(interaction, client) {
     // Obtém o usuário passado como argumento (se existir)
     const usuario = interaction.options.getUser('usuário');
 
-    // Responde à interação
     await interaction.reply({
       content: usuario
         ? `${usuario} foi banido!`

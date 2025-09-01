@@ -5,7 +5,12 @@ import { Settings } from '#types';
  */
 export const settings: Settings = {
   terminal: {
-    // Modo dos logs: "minimalista" ou "informativo"
+    /**
+     * Define o "estilo" dos logs no terminal
+     * - "informativo": mostra todos os detalhes
+     * - "minimalista": mostra apenas logs essenciais
+     */
+
     mode: 'minimalista',
 
     showSlashCommandsFiles: false, // opcional
@@ -17,8 +22,6 @@ export const settings: Settings = {
 
   bot: {
     token: process.env.TOKEN!, // obrigatório, fornecido no .env
-
-    guildID: [], // necessário se guildCommands for true
-    guildCommands: false, // Define se os comandos serão registrados apenas no servidor (true) ou globalmente (false)
+    guildID: [], // Usado para registrar os comandos apenas em um servidor
   },
 };

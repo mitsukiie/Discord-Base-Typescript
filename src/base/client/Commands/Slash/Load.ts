@@ -13,7 +13,7 @@ export async function LoadCommands(client: ExtendedClient) {
   const commands: any[] = [];
 
   // Caminho da pasta onde ficam os comandos
-  const folders = path.join(process.cwd(), 'src', 'comandos');
+  const folders = path.join(process.cwd(), 'src', 'commands');
   const categories = readdirSync(folders);
 
   if (settings.terminal.showSlashCommandsFiles) {
@@ -44,12 +44,11 @@ export async function LoadCommands(client: ExtendedClient) {
               fullPath,
             );
 
-            // Adiciona o comando na lista e no client
             commands.push(command.data);
             client.commands.set(entry.name, command);
           }
 
-          // Caso seja um arquivo .ts, tratamos como comando único
+          // Caso seja um arquivo, tratamos como comando único
           else if (entry.isFile() && entry.name.endsWith('.ts')) {
             const url = pathToFileURL(path.resolve(fullPath)).href;
             const module = await import(url);
@@ -66,10 +65,7 @@ export async function LoadCommands(client: ExtendedClient) {
             if (settings.terminal.showSlashCommandsFiles) {
               logger.success(`📄 Comando carregado: ${command.data.name}`);
             }
-          }
-
-          // Caso não seja nem pasta nem .ts, apenas logamos que foi ignorado
-          else {
+          } else {
             logger.warn(`⚠️ Entrada ignorada: ${entry.name}`);
           }
         }),

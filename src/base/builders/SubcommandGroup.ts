@@ -18,7 +18,6 @@ export async function createSubcommandGroup(
   description: string,
   directory: string,
 ) {
-  // Criamos o builder principal do comando usando SlashCommandBuilder
   const builder = new SlashCommandBuilder().setName(name).setDescription(description);
 
   // Array que vai armazenar os subcomandos carregado
@@ -30,7 +29,6 @@ export async function createSubcommandGroup(
     ) => Promise<void>;
   }[] = [];
 
-  // Array que vai armazenar os subcomandos carregado
   const files = readdirSync(directory).filter((f) => f.endsWith('.ts'));
 
   if (settings.terminal.showSlashCommandsFiles) {
@@ -116,7 +114,7 @@ export async function createSubcommandGroup(
         logger.success(`Subcomando carregado: ${subcommand.data.name}`);
       }
 
-      return cmd; // Retorna o subcomando configurado
+      return cmd;
     });
 
     // Armazena o subcomando no array para execução posterior
@@ -147,3 +145,4 @@ export async function createSubcommandGroup(
     },
   };
 }
+// mudança na 1.0.3

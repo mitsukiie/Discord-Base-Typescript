@@ -8,12 +8,9 @@ export async function RegisterEvents(client: ExtendedClient) {
   const events = await LoadEvents();
 
   events.forEach((event) => {
-    // Se o evento for "once", executa apenas uma vez
     if (event.once) {
       client.once(event.name, (...args) => event.run(...args, client));
-    }
-    // Caso contrário, registra como evento normal (on)
-    else {
+    } else {
       client.on(event.name, (...args) => event.run(...args, client));
     }
 

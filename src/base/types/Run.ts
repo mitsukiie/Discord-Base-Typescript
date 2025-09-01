@@ -1,13 +1,14 @@
-import { ChatInputCommandInteraction, ClientEvents } from 'discord.js';
+import { ApplicationCommandType, ClientEvents } from 'discord.js';
 import { ExtendedClient } from '#base';
+import { Interactions } from '#types';
 
 // Run event
 export type RunE<K extends keyof ClientEvents = keyof ClientEvents> = (
   ...args: [...ClientEvents[K], ExtendedClient]
-) => Promise<void> | void;
+) => any;
 
-// run slash command
-export type RunS = (
-  interaction: ChatInputCommandInteraction,
-  client: ExtendedClient,
-) => Promise<void>;
+// Run slash command
+export type RunS<K extends ApplicationCommandType> = (
+  interaction: Interactions[K],
+  client?: ExtendedClient,
+) => any;

@@ -19,16 +19,12 @@ export async function RegisterCommands(client: ExtendedClient) {
   const rest = new REST({ version: '10' }).setToken(settings.bot.token);
 
   try {
-    if (settings.terminal.showSlashCommandsRegistred) {
-      logger.info(`🔄 Atualizando ${commands.length} comandos (/)...`);
-    }
-    
-
     // Faz upload dos comandos para a API do Discord
-    if (settings.bot.guildCommands) {
-
+    if (settings.bot.guildID && settings.bot.guildID?.length > 0) {
       if (!settings.bot.guildID) {
-        logger.error('O guildId não está definido no .env! É necessário para registrar comandos no servidor.');
+        logger.error(
+          'O guildId não está definido no .env! É necessário para registrar comandos no servidor.',
+        );
         process.exit(1);
       }
 
@@ -37,38 +33,41 @@ export async function RegisterCommands(client: ExtendedClient) {
       const servers = await Promise.all(
         guilds.map(async (ID) => {
           try {
-            const result = (await rest.put(
-            Routes.applicationGuildCommands(client.user!.id, ID),
-              { body: commands }
-            )) as any[];
+            const guild = await client.guilds.fetch(ID).catch(() => null);
 
-            return { ID, commands: result.length, success: true };
+            await rest.put(Routes.applicationGuildCommands(client.user!.id, ID), {
+              body: commands,
+            });
+
+            return {
+              ID,
+              name: guild?.name ?? 'Servidor não encontrado',
+              commands: commands.length,
+              success: true,
+            };
           } catch (error) {
-            return { ID, success: false };
+            const guild = await client.guilds.fetch(ID).catch(() => null);
+            return {
+              ID,
+              name: guild?.name ?? 'Servidor não encontrado',
+              success: false,
+            };
           }
-        })
+        }),
       );
 
-      const response = {
-        message: "Comandos registrados",
-        servers
-      };
-
       if (settings.terminal.showSlashCommandsRegistred) {
-        logger.info(JSON.stringify(response, null, 2));
+        logger.info(JSON.stringify(servers, null, 2));
       }
-
     } else {
-
-      const result = (await rest.put(Routes.applicationCommands(client.user!.id), {
+      await rest.put(Routes.applicationCommands(client.user!.id), {
         body: commands,
-      })) as any[];
+      });
 
       if (settings.terminal.showSlashCommandsRegistred) {
-        logger.success(`✅ Comandos atualizados: ${result.length}`);
+        logger.success(`✅ Comandos atualizados: ${commands.length}`);
       }
     }
-    
   } catch (err) {
     console.error('❌ Erro ao registrar comandos:', err);
   }

@@ -9,7 +9,6 @@ export default createEvent({
 
   // Função executada quando a interação ocorre
   async run(interaction, client) {
-    // Ignora interações que não sejam comandos de chat (slash commands)
     if (!interaction.isChatInputCommand()) return;
 
     // Procura o comando registrado no client
@@ -20,22 +19,19 @@ export default createEvent({
     }
 
     try {
-      // Tenta executar o comando
       await command.run(interaction, client);
     } catch (err) {
-      // Se ocorrer erro, mostra no console
       console.error(err);
 
-      // Responde à interação de forma privada, dependendo se já foi respondida ou não
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
-          flags: [MessageFlags.Ephemeral], // resposta privada
+          flags: [MessageFlags.Ephemeral],
         });
       } else {
         await interaction.reply({
           content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
-          flags: [MessageFlags.Ephemeral], // resposta privada
+          flags: [MessageFlags.Ephemeral],
         });
       }
     }

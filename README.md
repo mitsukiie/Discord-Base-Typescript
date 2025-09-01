@@ -21,11 +21,11 @@ Este é o sucessor do repositório [djs-template](https://github.com/mitsukiie/D
 
 ## ✨ Características
 
-* 📂 **Slash Command Handler** (suporte a comandos globais e de guilda)
-* 🧩 **Subcommand Groups** (suporte a subcomandos)
-* 🎯 **Event Handler** (eventos organizados automaticamente)
-* ⚙️ **Configuração personalizável** no `settings.ts`
-* 📝 **Exemplos prontos** para servir de base
+- 📂 **Slash Command Handler** (suporte a comandos globais e de guilda)
+- 🧩 **Subcommand Groups** (suporte a subcomandos)
+- 🎯 **Event Handler** (eventos organizados automaticamente)
+- ⚙️ **Configuração personalizável** no `settings.ts`
+- 📝 **Exemplos prontos** para servir de base
 
 ---
 
@@ -33,7 +33,7 @@ Este é o sucessor do repositório [djs-template](https://github.com/mitsukiie/D
 
 ### Pré-requisitos
 
-* [Bun](https://bun.sh/) instalado
+- [Bun](https://bun.sh/) instalado
 
 ### Instale as dependências:
 
@@ -73,16 +73,13 @@ terminal: {
 
 ### 🔹 Comandos globais e de guilda
 
-Você pode optar por registrar comandos apenas em uma guilda específica ou globalmente:
+Você pode optar por registrar comandos apenas em uma guilda específica:
 
 ```ts
 bot: {
-  guildID: "your_guild_id", // ID da guilda
-  guildCommands: true       // true = comandos apenas na guilda | false = comandos globais
+  guildID: [], // Vazio por padrão, adicione o id para registrar comando nesse servidor
 }
 ```
-
-> ⚠️ Se usar `guildCommands: true`, garanta que o bot esteja no servidor e com permissões para criar comandos.
 
 ---
 
@@ -102,9 +99,9 @@ bun start
 
 Este template já vem com alguns exemplos para guiar você:
 
-* `src/comandos/utilitarios/ping.ts` → comando `/ping`
-* `src/comandos/utilitarios/user/ban.ts` → subcomando `/user ban`
-* `src/eventos/client/ready.ts` → evento `ready`
+- `src/commands/utils/ping.ts` → comando `/ping`
+- `src/commands/utils/user/ban.ts` → subcomando `/user ban`
+- `src/events/client/ready.ts` → evento `ready`
 
 ---
 
@@ -117,7 +114,7 @@ Se encontrar algum problema ou tiver sugestões, sinta-se à vontade para abrir 
 
 🔹 **Desenvolvedor:** @mitsukiie
 
-[![GitHub](https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white)](https://github.com/mitsukiie) 
-[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord\&logoColor=white)](https://discord.com/users/1098021115571490947)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?logo=linkedin\&logoColor=white)](https://www.linkedin.com/in/caio-victor-66715b309/)
-[![Email](https://img.shields.io/badge/Email-EA4335?logo=gmail\&logoColor=white)](mailto:c.victor3815@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white)](https://github.com/mitsukiie)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.com/users/1098021115571490947)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/caio-victor-66715b309/)
+[![Email](https://img.shields.io/badge/Email-EA4335?logo=gmail&logoColor=white)](mailto:c.victor3815@gmail.com)

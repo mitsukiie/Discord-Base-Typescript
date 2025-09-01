@@ -3,11 +3,10 @@ import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 // Importações internas do projeto
 import { RegisterCommands, RegisterEvents } from '#base';
 import { settings } from '#settings';
-import { logger } from '#utils'
+import { logger } from '#utils';
 
 // Classe que estende o Client padrão do Discord
 export class ExtendedClient extends Client {
-  // Coleção para armazenar todos os comandos carregados
   public commands: Collection<string, any> = new Collection();
 
   // Construtor da classe
@@ -23,7 +22,6 @@ export class ExtendedClient extends Client {
   // Método principal para iniciar o bot
   public async start() {
     try {
-
       // Registra todos os eventos do bot
       await RegisterEvents(this);
 
@@ -38,7 +36,6 @@ export class ExtendedClient extends Client {
       // Registra todos os comandos do bot
       await RegisterCommands(this);
     } catch (error) {
-      // Em caso de erro, mostra no console
       console.error(error);
     }
   }
