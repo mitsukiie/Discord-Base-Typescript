@@ -1,11 +1,10 @@
 import { glob } from 'glob';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import { logger } from '#base'
 
 // Importações internas do projeto
 import { Event } from '#types';
-import { settings } from '#settings';
-import { logger } from '#utils';
 
 // Função responsável por carregar os eventos
 export async function LoadEvents(): Promise<Event[]> {

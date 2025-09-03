@@ -1,6 +1,5 @@
 import { Events } from 'discord.js';
-import { createEvent } from '#builders';
-import { logger } from '#utils';
+import { createEvent, logger } from '#base';
 
 // Evento: ClientReady
 export default createEvent({

@@ -1,29 +1,20 @@
-import { ApplicationCommandType } from 'discord.js';
-import { Command } from '#types';
-
-const type = {
-  ChatInput: ApplicationCommandType.ChatInput,
-  User: ApplicationCommandType.User,
-  Message: ApplicationCommandType.Message,
-};
+import { ApplicationCommandType, ClientEvents } from 'discord.js';
+import { Command, Event } from '#types';
 
 /**
  * Cria um comando pronto para registro
- * Retorna um objeto com `data` contendo tudo que o Discord precisa e `run`.
  */
-export function createCommand(command: Command) {
-  // Monta o objeto "data" diretamente
+export function createCommand<K extends ApplicationCommandType>(command: Command<K>) {
   const data: any = {
     name: command.name,
     description: command.description,
-    type: type[command.type as keyof typeof type],
+    type: command.type,
     default_member_permissions: command.defaultMemberPermission ?? undefined,
     dm_permission: command.dmPermission ?? true,
     nsfw: command.nsfw ?? false,
     options: command.options ?? [],
     name_localizations: command.nameLocalizations ?? {},
     description_localizations: command.descriptionLocalizations ?? {},
-
     ...(command.integrationTypes && command.integrationTypes.length > 0
       ? { integration_types: command.integrationTypes }
       : {}),
@@ -33,4 +24,9 @@ export function createCommand(command: Command) {
     data,
     run: command.run,
   };
+}
+
+// Função auxiliar para criar eventos de forma tipada.
+export function createEvent<K extends keyof ClientEvents>(options: Event<K>): Event<K> {
+  return options;
 }

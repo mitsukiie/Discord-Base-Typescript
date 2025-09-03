@@ -1,7 +1,6 @@
 import { ExtendedClient } from '#base';
 import { LoadEvents } from './Load';
-import { settings } from '#settings';
-import { logger } from '#utils';
+import { logger } from '#base';
 
 // Função responsável por registrar eventos
 export async function RegisterEvents(client: ExtendedClient) {

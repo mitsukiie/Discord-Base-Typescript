@@ -1,5 +1,5 @@
-import { ApplicationCommandOptionType } from 'discord.js';
-import { createCommand } from '#builders';
+import { ApplicationCommandType, ApplicationCommandOptionType } from 'discord.js';
+import { createCommand } from '#base';
 
 /**
  * Comando /user info (dentro da categoria "user")
@@ -10,7 +10,7 @@ import { createCommand } from '#builders';
 export default createCommand({
   name: 'ban',
   description: 'Banir um usuário do servidor',
-  type: 'ChatInput', // Lembre de passar type para o run funcionar!
+  type: ApplicationCommandType.ChatInput, // Lembre de passar type para o run funcionar!
 
   // Opções (argumentos) que o comando pode receber
   options: [

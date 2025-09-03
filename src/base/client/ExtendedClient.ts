@@ -1,9 +1,8 @@
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 
 // Importações internas do projeto
-import { RegisterCommands, RegisterEvents } from '#base';
-import { settings } from '#settings';
-import { logger } from '#utils';
+import { RegisterCommands, RegisterEvents } from './index';
+import { logger } from '#base';
 
 // Classe que estende o Client padrão do Discord
 export class ExtendedClient extends Client {

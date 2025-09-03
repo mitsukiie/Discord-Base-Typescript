@@ -3,10 +3,8 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient } from '#base';
-import { createSubcommandGroup } from '#builders';
-import { logger } from '#utils';
-import { settings } from '#settings';
+import { ExtendedClient, logger } from '#base';
+import { createSubcommandGroup } from './SubcommandGroup';
 
 // Função responsável por carregar os comandos do bot
 export async function LoadCommands(client: ExtendedClient) {

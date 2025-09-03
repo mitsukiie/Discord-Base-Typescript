@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { settings } from '#settings';
 
 /**
  * Logger customizado do bot

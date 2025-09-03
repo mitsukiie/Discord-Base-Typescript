@@ -22,9 +22,8 @@
     "paths": {
       "#base": ["./src/base/index.ts"],
       "#types": ["./src/base/types/index.ts"],
-      "#builders": ["./src/base/builders/index.ts"],
       "#utils": ["./src/base/utils/index.ts"],
-      "#settings": ["./src/settings.ts"]
+
     }
   },
   "include": ["src"]

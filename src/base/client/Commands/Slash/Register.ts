@@ -1,10 +1,8 @@
 import { REST, Routes } from 'discord.js';
 
 // Importações internas do projeto
-import { ExtendedClient } from '#base';
-import { LoadCommands } from './Load';
-import { logger } from '#utils';
-import { settings } from '#settings';
+import { ExtendedClient, logger } from '#base';
+import { LoadCommands } from './Load';;
 
 // Função responsável por registrar os comandos do bot
 export async function RegisterCommands(client: ExtendedClient) {
