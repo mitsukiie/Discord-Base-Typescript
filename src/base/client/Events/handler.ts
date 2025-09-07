@@ -1,22 +1,21 @@
 import { glob } from 'glob';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import { logger } from '#base'
+import { ExtendedClient, logger } from '#base';
 
 // Importações internas do projeto
+import { App } from '../../app';
 import { Event } from '#types';
 
-// Função responsável por carregar os eventos
-export async function LoadEvents(): Promise<Event[]> {
-  // Busca todos os arquivos dentro de src/events/**/*.ts
+// Função responsável por registrar eventos
+export async function RegisterEvents(client: ExtendedClient) {
+  const app = App.getInstance();
   const files = await glob(`./src/events/**/*.ts`);
 
-  if (settings.terminal.showEventsFiles) {
+  if (app.config.terminal.showEventsFiles) {
     logger.info('🔄 Iniciando o carregamento de eventos...');
     logger.success(`📂 Total de eventos encontrados: ${files.length}`);
   }
-
-  const events: Event[] = [];
 
   // Carrega cada evento encontrado
   await Promise.all(
@@ -30,9 +29,21 @@ export async function LoadEvents(): Promise<Event[]> {
         return;
       }
 
-      events.push(event);
+      app.events.add(event);
     }),
   );
 
-  return events;
+  const events = app.events.all();
+
+  events.forEach((event) => {
+    if (event.once) {
+      client.once(event.name, (...args) => event.run(...args, client));
+    } else {
+      client.on(event.name, (...args) => event.run(...args, client));
+    }
+
+    if (app.config.terminal.showEventsRegistred) {
+      logger.success(`⚡ Evento registrado: ${event.name}`);
+    }
+  });
 }

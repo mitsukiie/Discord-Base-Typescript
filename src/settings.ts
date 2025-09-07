@@ -21,7 +21,6 @@ export const settings: Settings = {
   },
 
   bot: {
-    token: process.env.TOKEN!, // obrigatório, fornecido no .env
     guildID: [], // Usado para registrar os comandos apenas em um servidor
   },
 };

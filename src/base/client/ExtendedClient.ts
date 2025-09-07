@@ -1,39 +1,74 @@
-import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
+import {
+  Client,
+  Collection,
+  GatewayIntentBits,
+  Partials,
+  ChatInputCommandInteraction,
+  MessageFlags,
+} from 'discord.js';
 
 // Importações internas do projeto
+import { App } from '../app';
 import { RegisterCommands, RegisterEvents } from './index';
 import { logger } from '#base';
 
 // Classe que estende o Client padrão do Discord
 export class ExtendedClient extends Client {
-  public commands: Collection<string, any> = new Collection();
+  public commands: Collection<string, any> = new Collection(); // Armazena comandos carregados
 
-  // Construtor da classe
+  // Construtor do client personalizado
   constructor() {
     super({
-      // Define todos os intents disponíveis do Discord (para receber eventos)
-      intents: Object.values(GatewayIntentBits) as GatewayIntentBits[],
-      // Define todos os partials disponíveis (para trabalhar com objetos parcialmente carregados)
-      partials: Object.values(Partials) as Partials[],
+      intents: Object.values(GatewayIntentBits) as GatewayIntentBits[], // Todos os intents
+      partials: Object.values(Partials) as Partials[], // Todos os partials
     });
   }
 
-  // Método principal para iniciar o bot
+  // Lida com interações de slash commands
+  private async handleInteraction(interaction: ChatInputCommandInteraction) {
+    if (!interaction.isChatInputCommand()) return; // Filtra apenas comandos de chat
+    const app = App.getInstance();
+
+    const command = app.commands.get(interaction.commandName); // Busca o comando registrado
+    if (!command) return;
+
+    try {
+      await command.run(interaction, this); // Executa o comando
+    } catch (err) {
+      console.error(err);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
+          flags: [MessageFlags.Ephemeral],
+        });
+      } else {
+        await interaction.reply({
+          content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
+          flags: [MessageFlags.Ephemeral],
+        });
+      }
+    }
+  }
+
+  // Inicializa o bot
   public async start() {
     try {
-      // Registra todos os eventos do bot
-      await RegisterEvents(this);
+      await RegisterEvents(this); // Registra eventos
 
-      if (!settings.bot.token) {
+      if (!process.env.TOKEN) {
         logger.error('O token não está definido no .env!');
         process.exit(1);
       }
 
-      // Faz login no Discord usando o token definido nas configurações (settings.ts)
-      await this.login(settings.bot.token);
+      await this.login(process.env.TOKEN); // Login do bot
+      await RegisterCommands(this); // Registra comandos
 
-      // Registra todos os comandos do bot
-      await RegisterCommands(this);
+      // Listener central para interações de chat input
+      this.on('interactionCreate', (interaction) => {
+        if (!interaction.isChatInputCommand()) return;
+
+        this.handleInteraction(interaction);
+      });
     } catch (error) {
       console.error(error);
     }

@@ -12,12 +12,6 @@ export interface Settings {
 
   bot: {
     /**
-     * Token do bot (obrigatório)
-     * Fornecido no portal de desenvolvedores do Discord
-     */
-    token: string;
-
-    /**
      * Guild ID
      * Usado para registrar os comandos apenas em um servidor
      */

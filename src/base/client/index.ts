@@ -1,2 +1,4 @@
-export * from './Commands/Slash/Register';
-export * from './Events/Register';
+export * from './Commands/handler';
+export * from './Commands/manager';
+export * from './Events/handler';
+export * from './Events/manager';

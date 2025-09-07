@@ -1,4 +1,6 @@
 import chalk from 'chalk';
+import { App } from '../app';
+const app = App.getInstance();
 
 /**
  * Logger customizado do bot
@@ -16,7 +18,7 @@ import chalk from 'chalk';
 
 /** Log informativo (azul) */
 async function info(msg: any) {
-  switch (settings.terminal.mode) {
+  switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(
@@ -37,7 +39,7 @@ async function info(msg: any) {
 
 /** Log de aviso (amarelo) */
 async function warn(msg: any) {
-  switch (settings.terminal.mode) {
+  switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(
@@ -58,7 +60,7 @@ async function warn(msg: any) {
 
 /** Log de erro (vermelho) */
 async function error(msg: any) {
-  switch (settings.terminal.mode) {
+  switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(
@@ -79,7 +81,7 @@ async function error(msg: any) {
 
 /** Log de sucesso (verde) */
 async function success(msg: any) {
-  switch (settings.terminal.mode) {
+  switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(

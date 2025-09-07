@@ -1,4 +1,3 @@
 export * from './client/ExtendedClient';
-export * from './utils/Logger'
-export * from './creators';
-export * from './settings';
+export * from './utils/Logger';
+export { createCommand, createEvent } from './creators';
