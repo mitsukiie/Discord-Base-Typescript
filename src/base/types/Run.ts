@@ -1,14 +1,25 @@
 import { ApplicationCommandType, ClientEvents } from 'discord.js';
 import { ExtendedClient } from '#base';
-import { Interactions } from '#types';
+import {
+  CommandInteraction,
+  CommandType,
+  ResponderInteraction,
+  ResponderType,
+} from '#types';
 
 // Run event
-export type RunE<K extends keyof ClientEvents = keyof ClientEvents> = (
+export type RunEvent<K extends keyof ClientEvents = keyof ClientEvents> = (
   ...args: [...ClientEvents[K], ExtendedClient]
 ) => any;
 
 // Run slash command
-export type RunS<K extends ApplicationCommandType> = (
-  interaction: Interactions[K],
+export type RunCommand<T extends CommandType> = (
+  interaction: CommandInteraction<T>,
   client?: ExtendedClient,
+) => any;
+
+// Run responder
+export type RunResponder<T extends ResponderType, P = any> = (
+  interaction: ResponderInteraction<T>,
+  params?: P,
 ) => any;

@@ -1,13 +1,12 @@
 import { glob } from 'glob';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import { ExtendedClient, logger } from '#base';
 
 // Importações internas do projeto
-import { App } from '../../app';
+import { ExtendedClient, App } from '#base';
 import { Event } from '#types';
+import { logger } from '#utils';
 
-// Função responsável por registrar eventos
 export async function RegisterEvents(client: ExtendedClient) {
   const app = App.getInstance();
   const files = await glob(`./src/events/**/*.ts`);
@@ -17,7 +16,6 @@ export async function RegisterEvents(client: ExtendedClient) {
     logger.success(`📂 Total de eventos encontrados: ${files.length}`);
   }
 
-  // Carrega cada evento encontrado
   await Promise.all(
     files.map(async (file) => {
       const url = pathToFileURL(path.resolve(file)).href;

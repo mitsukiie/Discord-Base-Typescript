@@ -1,31 +1,30 @@
 import { Collection } from 'discord.js';
 import type { Event } from '#types';
 
-// Gerencia os eventos do bot
 export class EventManager {
-  private readonly events = new Collection<string, Event>(); // Armazena os eventos
+  private readonly events = new Collection<string, Event>();
 
   public add(event: Event) {
-    this.events.set(event.name as string, event); // Adiciona um evento
+    this.events.set(event.name, event);
   }
 
   public get(name: string) {
-    return this.events.get(name); // Retorna um evento pelo nome
+    return this.events.get(name);
   }
 
   public all() {
-    return Array.from(this.events.values()); // Retorna todos os eventos
+    return Array.from(this.events.values());
   }
 
   public remove(name: string) {
-    this.events.delete(name); // Remove um evento pelo nome
+    this.events.delete(name);
   }
 
   public clear() {
-    this.events.clear(); // Limpa todos os eventos
+    this.events.clear();
   }
 
   public size() {
-    return this.events.size; // Retorna a quantidade de eventos
+    return this.events.size;
   }
 }

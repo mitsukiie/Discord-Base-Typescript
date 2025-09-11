@@ -1,4 +1,5 @@
-import { ApplicationCommandType, ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
+import { CommandType } from '#types';
 import { createCommand } from '#base';
 
 /**
@@ -10,15 +11,13 @@ import { createCommand } from '#base';
 export default createCommand({
   name: 'ban',
   description: 'Banir um usuário do servidor',
-  type: ApplicationCommandType.ChatInput, // Lembre de passar type para o run funcionar!
+  type: CommandType.ChatInput, // Lembre de passar type para o run funcionar!
 
   // Opções (argumentos) que o comando pode receber
   options: [
     {
       name: 'usuário',
       description: 'Usuário para banir',
-
-      // Tipo da opção (nesse caso, um usuário do Discord)
       type: ApplicationCommandOptionType.User,
 
       required: false,
@@ -26,7 +25,6 @@ export default createCommand({
   ],
 
   async run(interaction, client) {
-    // Obtém o usuário passado como argumento (se existir)
     const usuario = interaction.options.getUser('usuário');
 
     await interaction.reply({

@@ -4,16 +4,14 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { App } from '../../app';
-import { ExtendedClient, logger } from '#base';
+import { ExtendedClient, App } from '#base';
 import { createSubcommand } from '../../creators';
+import { logger } from '#utils';
 
-// Função responsável por carregar os comandos do bot
 export async function RegisterCommands(client: ExtendedClient) {
   const app = App.getInstance();
   const commands: any[] = [];
 
-  // Caminho da pasta onde ficam os comandos
   const folders = path.join(process.cwd(), 'src', 'commands');
   const categories = readdirSync(folders);
 
@@ -22,7 +20,6 @@ export async function RegisterCommands(client: ExtendedClient) {
     logger.success(`📂 Total de categorias: ${categories.length}`);
   }
 
-  // Percorre cada categoria de comandos
   await Promise.all(
     categories.map(async (categorie) => {
       const categoryPath = path.join(folders, categorie);
@@ -32,7 +29,6 @@ export async function RegisterCommands(client: ExtendedClient) {
         logger.success(`📂 Categoria: ${categorie} - ${entries.length} comandos`);
       }
 
-      // Percorre cada entrada dentro da categoria (pode ser pasta ou arquivo)
       await Promise.all(
         entries.map(async (entry) => {
           const fullPath = path.join(categoryPath, entry.name);
@@ -75,11 +71,9 @@ export async function RegisterCommands(client: ExtendedClient) {
     process.exit(1);
   }
 
-  // Cria instância do REST para atualizar os comandos no Discord
   const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
   try {
-    // Faz upload dos comandos para a API do Discord
     if (app.config.bot.guildID && app.config.bot.guildID?.length > 0) {
       const guilds = app.config.bot.guildID;
 

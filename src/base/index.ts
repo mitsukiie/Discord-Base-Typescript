@@ -1,3 +1,3 @@
 export * from './client/ExtendedClient';
-export * from './utils/Logger';
-export { createCommand, createEvent } from './creators';
+export * from './app';
+export { createCommand, createEvent, createResponder } from './creators';

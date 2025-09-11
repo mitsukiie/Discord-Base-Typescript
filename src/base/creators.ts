@@ -10,15 +10,14 @@ import { readdirSync } from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
-import { App } from './app';
-import { ExtendedClient, logger } from '#base';
-import { Command, Event } from '#types';
+// Importações internas do projeto
+import { ExtendedClient, App } from '#base';
+import { Command, Event, Responder, ResponderType, CommandType } from '#types';
+import { logger } from '#utils';
 
-// Factory de criadores para comandos, subcomandos e eventos
 function Creators() {
   return {
-    // Cria um comando normal
-    createCommand: function <K extends ApplicationCommandType>(command: Command<K>) {
+    createCommand: function <T extends CommandType>(command: Command<T>) {
       const data: any = {
         name: command.name,
         description: command.description,
@@ -40,7 +39,6 @@ function Creators() {
       };
     },
 
-    // Cria um grupo de subcomandos (não exportado)
     createSubcommand: async function (name: string, directory: string): Promise<any> {
       const app = App.getInstance();
       const subcommands: Record<string, Command> = {};
@@ -100,12 +98,17 @@ function Creators() {
       };
     },
 
-    // Cria um evento
     createEvent: function <K extends keyof ClientEvents>(options: Event<K>): Event<K> {
       return options;
+    },
+
+    createResponder: function <T extends ResponderType>(opts: Responder<string, T, any>) {
+      const app = App.getInstance();
+      app.responders.register(opts);
+      return opts;
     },
   };
 }
 
-// Exporta os criadores
-export const { createCommand, createEvent, createSubcommand } = Creators();
+export const { createCommand, createSubcommand, createEvent, createResponder } =
+  Creators();

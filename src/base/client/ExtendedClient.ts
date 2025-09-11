@@ -8,32 +8,29 @@ import {
 } from 'discord.js';
 
 // Importações internas do projeto
-import { App } from '../app';
-import { RegisterCommands, RegisterEvents } from './index';
-import { logger } from '#base';
+import { App } from '#base';
+import { RegisterCommands, RegisterEvents } from './';
+import { isResponder, logger } from '#utils';
 
-// Classe que estende o Client padrão do Discord
 export class ExtendedClient extends Client {
-  public commands: Collection<string, any> = new Collection(); // Armazena comandos carregados
+  public commands: Collection<string, any> = new Collection();
 
-  // Construtor do client personalizado
   constructor() {
     super({
-      intents: Object.values(GatewayIntentBits) as GatewayIntentBits[], // Todos os intents
-      partials: Object.values(Partials) as Partials[], // Todos os partials
+      intents: Object.values(GatewayIntentBits) as GatewayIntentBits[],
+      partials: Object.values(Partials) as Partials[],
     });
   }
 
-  // Lida com interações de slash commands
   private async handleInteraction(interaction: ChatInputCommandInteraction) {
-    if (!interaction.isChatInputCommand()) return; // Filtra apenas comandos de chat
+    if (!interaction.isChatInputCommand()) return;
     const app = App.getInstance();
 
-    const command = app.commands.get(interaction.commandName); // Busca o comando registrado
+    const command = app.commands.get(interaction.commandName);
     if (!command) return;
 
     try {
-      await command.run(interaction, this); // Executa o comando
+      await command.run(interaction, this);
     } catch (err) {
       console.error(err);
       if (interaction.replied || interaction.deferred) {
@@ -52,22 +49,31 @@ export class ExtendedClient extends Client {
 
   // Inicializa o bot
   public async start() {
+    const app = App.getInstance();
     try {
-      await RegisterEvents(this); // Registra eventos
+      await RegisterEvents(this);
 
       if (!process.env.TOKEN) {
         logger.error('O token não está definido no .env!');
         process.exit(1);
       }
 
-      await this.login(process.env.TOKEN); // Login do bot
-      await RegisterCommands(this); // Registra comandos
+      await this.login(process.env.TOKEN);
+      await RegisterCommands(this);
 
       // Listener central para interações de chat input
-      this.on('interactionCreate', (interaction) => {
-        if (!interaction.isChatInputCommand()) return;
+      this.on('interactionCreate', async (interaction) => {
+        // comandos slash
+        if (interaction.isChatInputCommand()) {
+          const command = app.commands.get(interaction.commandName);
+          if (command) await command.run(interaction);
+        }
 
-        this.handleInteraction(interaction);
+        // qualquer interação (botão, modal, select)
+        if (isResponder(interaction)) {
+          await app.responders.run(interaction);
+          return;
+        }
       });
     } catch (error) {
       console.error(error);

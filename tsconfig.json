@@ -20,9 +20,9 @@
     "noPropertyAccessFromIndexSignature": false,
 
     "paths": {
-      "#base": ["./src/base/index.ts"],
-      "#types": ["./src/base/types/index.ts"],
-      "#utils": ["./src/base/utils/index.ts"],
+      "#base": ["./src/base"],
+      "#types": ["./src/base/types"],
+      "#utils": ["./src/base/utils"],
       "#settings": ["./src/settings.ts"]
     }
   },

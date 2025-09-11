@@ -1,9 +1,8 @@
 import { Events } from 'discord.js';
-import { createEvent, logger } from '#base';
+import { createEvent } from '#base';
+import { logger } from '#utils';
 
-// Evento: ClientReady
 export default createEvent({
-  // Nome do evento
   name: Events.ClientReady,
 
   async run(interaction, client) {

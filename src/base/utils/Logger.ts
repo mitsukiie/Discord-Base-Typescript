@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { App } from '../app';
-const app = App.getInstance();
 
 /**
  * Logger customizado do bot
@@ -16,8 +15,8 @@ const app = App.getInstance();
  *   - success → Ações concluídas com sucesso (verde)
  */
 
-/** Log informativo (azul) */
 async function info(msg: any) {
+  const app = App.getInstance();
   switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
@@ -37,8 +36,8 @@ async function info(msg: any) {
   }
 }
 
-/** Log de aviso (amarelo) */
 async function warn(msg: any) {
+  const app = App.getInstance();
   switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
@@ -58,12 +57,12 @@ async function warn(msg: any) {
   }
 }
 
-/** Log de erro (vermelho) */
 async function error(msg: any) {
+  const app = App.getInstance();
   switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
-      console.log(
+      console.error(
         chalk.redBright(
           `[ERROR] [${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}] ${msg}`,
         ),
@@ -71,7 +70,7 @@ async function error(msg: any) {
       break;
 
     case 'minimalista':
-      console.log(chalk.redBright(`✗ ${msg}`));
+      console.error(chalk.redBright(`✗ ${msg}`));
       break;
 
     default:
@@ -79,8 +78,8 @@ async function error(msg: any) {
   }
 }
 
-/** Log de sucesso (verde) */
 async function success(msg: any) {
+  const app = App.getInstance();
   switch (app.config.terminal.mode) {
     case 'informativo':
       const date = new Date();
@@ -100,7 +99,6 @@ async function success(msg: any) {
   }
 }
 
-/** Objeto exportado com todos os tipos de log */
 export const logger = {
   info,
   warn,

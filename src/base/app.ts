@@ -1,24 +1,25 @@
-import { CommandManager, EventManager } from './client/index';
+import { CommandManager, EventManager, ResponderManager } from './client/index';
 import { settings } from '#settings';
 
-// Classe principal da aplicação (Singleton)
 export class App {
-  private static instance: App | null = null; // Instância única
+  private static instance: App | null = null;
 
-  public readonly commands: CommandManager; // Gerenciador de comandos
-  public readonly events = new EventManager(); // Gerenciador de eventos
+  public readonly commands: CommandManager;
+  public readonly events = new EventManager();
+  public readonly responders = new ResponderManager();
 
-  public readonly config = settings; // Configurações do bot
+  public readonly config = settings;
 
   private constructor() {
-    this.commands = new CommandManager(); // Inicializa CommandManager
-    this.events = new EventManager(); // Inicializa EventManager
+    this.commands = new CommandManager();
+    this.events = new EventManager();
+    this.responders = new ResponderManager();
   }
 
   public static getInstance() {
     if (!App.instance) {
-      App.instance = new App(); // Cria a instância se não existir
+      App.instance = new App();
     }
-    return App.instance; // Retorna a instância única
+    return App.instance;
   }
 }

@@ -11,25 +11,30 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-import { RunS } from '#types';
+import { RunCommand } from '#types';
 
-/**
- * Mapeamento de cada tipo de comando para a interação correspondente.
- */
-export type Interactions = {
-  [ApplicationCommandType.ChatInput]: ChatInputCommandInteraction;
-  [ApplicationCommandType.User]: UserContextMenuCommandInteraction;
-  [ApplicationCommandType.Message]: MessageContextMenuCommandInteraction;
-  [ApplicationCommandType.PrimaryEntryPoint]: ContextMenuCommandInteraction;
-};
+export enum CommandType {
+  ChatInput = ApplicationCommandType.ChatInput,
+  User = ApplicationCommandType.User,
+  Message = ApplicationCommandType.Message,
+  PrimaryEntryPoint = ApplicationCommandType.PrimaryEntryPoint,
+}
 
-/**
- * Estrutura base de um comando do bot usando enums.
- */
-export type Command<K extends ApplicationCommandType = ApplicationCommandType> = {
+export type CommandInteraction<Type extends CommandType = CommandType> =
+  Type extends CommandType.ChatInput
+    ? ChatInputCommandInteraction
+    : Type extends CommandType.User
+      ? UserContextMenuCommandInteraction
+      : Type extends CommandType.Message
+        ? MessageContextMenuCommandInteraction
+        : Type extends CommandType.PrimaryEntryPoint
+          ? ContextMenuCommandInteraction
+          : never;
+
+export type Command<Type extends CommandType = CommandType> = {
   name: string;
   description: string;
-  type: K;
+  type: Type;
   defaultMemberPermission?: PermissionResolvable | null;
   dmPermission?: boolean;
   integrationTypes?: ApplicationIntegrationType[] | [];
@@ -40,5 +45,5 @@ export type Command<K extends ApplicationCommandType = ApplicationCommandType> =
   botpermission?: { permission: keyof typeof PermissionFlagsBits; msg: string } | null;
   allowIds?: { ids: string[]; msg: string } | null;
   options?: APIApplicationCommandOption[];
-  run: RunS<K>;
+  run: RunCommand<Type>;
 };

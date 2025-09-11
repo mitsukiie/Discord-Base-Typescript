@@ -1,27 +1,26 @@
 import { Collection } from 'discord.js';
 import type { Command } from '#types';
 
-// Gerencia os comandos do bot
 export class CommandManager {
-  private readonly commands = new Collection<string, Command>(); // Armazena os comandos
+  private readonly commands = new Collection<string, Command>();
 
   public add(name: string, command: Command) {
-    this.commands.set(name, command); // Adiciona um comando
+    this.commands.set(name, command);
   }
 
   public get(name: string) {
-    return this.commands.get(name); // Retorna um comando pelo nome
+    return this.commands.get(name);
   }
 
   public all() {
-    return Array.from(this.commands.values()); // Retorna todos os comandos
+    return Array.from(this.commands.values());
   }
 
   public clear() {
-    this.commands.clear(); // Limpa todos os comandos
+    this.commands.clear();
   }
 
   public size() {
-    return this.commands.size; // Retorna a quantidade de comandos
+    return this.commands.size;
   }
 }
