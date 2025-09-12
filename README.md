@@ -71,9 +71,9 @@ terminal: {
 }
 ```
 
-### 🔹 Comandos globais e de guilda
+### 🔹 Comandos globais e de servidor
 
-Você pode optar por registrar comandos apenas em uma guilda específica:
+Você pode optar por registrar comandos apenas em um servidor específico:
 
 ```ts
 bot: {
