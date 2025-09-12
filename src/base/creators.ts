@@ -21,28 +21,12 @@ import { logger } from '#utils';
 function Creators() {
   return {
     createCommand: function <T extends CommandType>(command: Command<T>) {
-      const data: any = {
-        name: command.name,
-        description: command.description,
-        type: command.type,
-        options: command.options ?? [],
-        defaultmemberpermissions: command.defaultMemberPermission ?? undefined,
-        dmpermission: command.dmPermission ?? true,
-        botpermission: command.botpermission ?? null,
-        allowids: command.allowIds ?? [],
-        nsfw: command.nsfw ?? false,
-      };
-
-      return {
-        data,
-        autocomplete: command.autocomplete,
-        run: command.run,
-      };
+      return command;
     },
 
     createSubcommand: async function (name: string, directory: string): Promise<any> {
       const app = App.getInstance();
-      const subcommands: Record<string, any> = {};
+      const subcommands: Record<string, Command> = {};
       const options: APIApplicationCommandOption[] = [];
 
       const files = readdirSync(directory).filter((f) => f.endsWith('.ts'));
@@ -56,32 +40,30 @@ function Creators() {
           const module = await import(url);
           const sub = module.default;
 
-          if (!sub?.data || !sub?.run) {
+          if (!sub?.run) {
             logger.warn(`Subcomando inválido ignorado: ${file}`);
             return;
           }
 
-          subcommands[sub.data.name] = sub;
+          subcommands[sub.name] = sub;
           options.push({
             type: ApplicationCommandOptionType.Subcommand,
-            name: sub.data.name,
-            description: sub.data.description,
-            options: sub.data.options as APIApplicationCommandBasicOption[],
+            name: sub.name,
+            description: sub.description,
+            options: sub.options as APIApplicationCommandBasicOption[],
           });
 
           if (app.config.terminal.showSlashCommandsFiles) {
-            logger.success(`Subcomando carregado: ${sub.data.name}`);
+            logger.success(`Subcomando carregado: ${sub.name}`);
           }
         }),
       );
 
       return {
-        data: {
-          name,
-          description: `Comando ${name} com subcomandos`,
-          type: ApplicationCommandType.ChatInput,
-          options,
-        },
+        name,
+        description: `Comando ${name} com subcomandos`,
+        type: ApplicationCommandType.ChatInput,
+        options,
         autocomplete: (i: AutocompleteInteraction, focused: string) => {
           const name = i.options.getSubcommand();
           const sub = subcommands[name];
@@ -96,48 +78,8 @@ function Creators() {
               ephemeral: true,
             });
           }
-
-          if (sub.data.allowids.length > 0 && !sub.data.allowids.includes(i.user.id)) {
-            return i.reply({
-              content: 'Você não tem permissão para usar este subcomando',
-              flags: [MessageFlags.Ephemeral],
-            });
-          }
-
-          if (
-            sub.data.botpermission &&
-            !i.guild?.members.me?.permissions.has(sub.data.botpermission)
-          ) {
-            return i.reply({
-              content: `Eu preciso da permissão **${sub.data.botpermission}** para executar este subcomando.`,
-              flags: [MessageFlags.Ephemeral],
-            });
-          }
-
-          if (sub.data.defaultmemberpermissions) {
-            const member = i.member as GuildMember;
-
-            if (!member.permissions.has(sub.data.defaultmemberpermissions)) {
-              return i.reply({
-                content: 'Você não tem permissão para usar este subcomando.',
-                flags: [MessageFlags.Ephemeral],
-              });
-            }
-          }
-
-          if (sub.data.nsfw && i.channel && 'nsfw' in i.channel && !i.channel.nsfw) {
-            return i.reply({
-              content: 'Este subcomando só pode ser usado em canais NSFW.',
-              flags: [MessageFlags.Ephemeral],
-            });
-          }
-
-          if (i.guild === null && sub.data.dmpermission === false) {
-            return i.reply({
-              content: 'Este subcomando não pode ser usado em mensagens diretas.',
-              flags: [MessageFlags.Ephemeral],
-            });
-          }
+          const canRun = await CheckPermission(i, sub);
+          if (!canRun) return;
 
           return sub.run(i, client);
         },
@@ -158,3 +100,63 @@ function Creators() {
 
 export const { createCommand, createSubcommand, createEvent, createResponder } =
   Creators();
+
+async function CheckPermission(
+  i: ChatInputCommandInteraction, 
+  command: Command
+) {
+  const member = i.member as GuildMember;
+  if (!command.allowIds) return;
+
+  // 1️⃣ allowIds
+  if (command.allowIds.length > 0 && !command.allowIds.includes(i.user.id)) {
+    await i.reply({
+      content: 'Você não tem permissão para usar este subcomando',
+      flags: [MessageFlags.Ephemeral],
+    });
+    return false;
+  }
+
+  // 2️⃣ bot permission
+  if (
+    command.botpermission &&
+    !i.guild?.members.me?.permissions.has(command.botpermission)
+  ) {
+    await i.reply({
+      content: `Eu preciso da permissão **${command.botpermission}** para executar este subcomando.`,
+        flags: [MessageFlags.Ephemeral],
+    });
+    return false;
+  }
+
+  // 3️⃣ member permission
+  if (command.defaultMemberPermission && member) {
+    if (!member.permissions.has(command.defaultMemberPermission)) {
+      await i.reply({
+        content: 'Você não tem permissão para usar este subcomando.',
+        flags: [MessageFlags.Ephemeral],
+      });
+      return false;
+    }
+  }
+
+  // 4️⃣ NSFW
+  if (command.nsfw && i.channel && 'nsfw' in i.channel && !i.channel.nsfw) {
+    await i.reply({
+      content: 'Este subcomando só pode ser usado em canais NSFW.',
+      flags: [MessageFlags.Ephemeral],
+    });
+    return false;
+  }
+
+  // 5️⃣ DM Permission
+  if (i.guild === null && command.dmPermission === false) {
+    await i.reply({
+      content: 'Este comando não pode ser usado em DMs.',
+      flags: [MessageFlags.Ephemeral],
+    });
+    return false;
+  }
+
+  return true;
+}

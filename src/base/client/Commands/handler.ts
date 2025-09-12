@@ -6,6 +6,7 @@ import { pathToFileURL } from 'url';
 // Importações internas do projeto
 import { ExtendedClient, App } from '#base';
 import { createSubcommand } from '../../creators';
+import { Command } from '#types';
 import { logger } from '#utils';
 
 export async function RegisterCommands(client: ExtendedClient) {
@@ -36,8 +37,9 @@ export async function RegisterCommands(client: ExtendedClient) {
           // Caso seja uma pasta, tratamos como grupo de subcomandos
           if (entry.isDirectory()) {
             const command = await createSubcommand(entry.name, fullPath);
+            const formatted = FormatCommand(command);
 
-            commands.push(command.data);
+            commands.push(formatted.data);
             app.commands.add(entry.name, command);
           }
 
@@ -52,11 +54,13 @@ export async function RegisterCommands(client: ExtendedClient) {
               return;
             }
 
-            commands.push(command.data);
-            app.commands.add(command.data.name, command);
+            const formatted = FormatCommand(command);
+
+            commands.push(formatted.data);
+            app.commands.add(formatted.data.name, command);
 
             if (app.config.terminal.showSlashCommandsFiles) {
-              logger.success(`📄 Comando carregado: ${command.data.name}`);
+              logger.success(`📄 Comando carregado: ${formatted.data.name}`);
             }
           } else {
             logger.warn(`⚠️ Entrada ignorada: ${entry.name}`);
@@ -118,4 +122,22 @@ export async function RegisterCommands(client: ExtendedClient) {
   } catch (err) {
     console.error('❌ Erro ao registrar comandos:', err);
   }
+}
+
+function FormatCommand(command: Command) {
+  return {
+    data: {
+    name: command.name,
+    description: command.description || 'Sem descrição',
+    type: command.type ?? 1,
+    options: command.options || [],
+    defaultMemberPermission: command.defaultMemberPermission || null,
+    botpermission: command.botpermission || null,
+    dmPermission: command.dmPermission !== undefined ? command.dmPermission : true,
+    nsfw: command.nsfw || false,
+    allowIds: command.allowIds || null,
+    },
+    autocomplete: command.autocomplete,
+    run: command.run,
+  };
 }
