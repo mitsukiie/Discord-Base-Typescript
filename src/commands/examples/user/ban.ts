@@ -10,7 +10,7 @@ import { createCommand } from '#base';
 
 export default createCommand({
   name: 'ban',
-  description: 'Banir um usuário do servidor',
+  description: 'subcomando',
   type: CommandType.ChatInput, // Lembre de passar type para o run funcionar!
 
   // Opções (argumentos) que o comando pode receber

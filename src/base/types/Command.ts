@@ -11,7 +11,7 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-import { RunCommand } from '#types';
+import { RunCommand, RunAutoComplete } from '#types';
 
 export enum CommandType {
   ChatInput = ApplicationCommandType.ChatInput,
@@ -35,15 +35,15 @@ export type Command<Type extends CommandType = CommandType> = {
   name: string;
   description: string;
   type: Type;
-  defaultMemberPermission?: PermissionResolvable | null;
-  dmPermission?: boolean;
-  integrationTypes?: ApplicationIntegrationType[] | [];
-  nameLocalizations?: Partial<Record<Locale, string | null>>;
-  descriptionLocalizations?: Partial<Record<Locale, string | null>>;
-  nsfw?: boolean;
-  cooldown?: { time: number; msg: string } | null;
-  botpermission?: { permission: keyof typeof PermissionFlagsBits; msg: string } | null;
-  allowIds?: { ids: string[]; msg: string } | null;
   options?: APIApplicationCommandOption[];
+  autocomplete?: RunAutoComplete;
+
+  defaultMemberPermission?: PermissionResolvable | null;
+  botpermission?: keyof typeof PermissionFlagsBits | null;
+  dmPermission?: boolean;
+
+  nsfw?: boolean;
+  allowIds?: string[] | null;
+
   run: RunCommand<Type>;
 };

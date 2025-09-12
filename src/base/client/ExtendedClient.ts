@@ -3,7 +3,6 @@ import {
   Collection,
   GatewayIntentBits,
   Partials,
-  ChatInputCommandInteraction,
   MessageFlags,
 } from 'discord.js';
 
@@ -22,31 +21,6 @@ export class ExtendedClient extends Client {
     });
   }
 
-  private async handleInteraction(interaction: ChatInputCommandInteraction) {
-    if (!interaction.isChatInputCommand()) return;
-    const app = App.getInstance();
-
-    const command = app.commands.get(interaction.commandName);
-    if (!command) return;
-
-    try {
-      await command.run(interaction, this);
-    } catch (err) {
-      console.error(err);
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
-          flags: [MessageFlags.Ephemeral],
-        });
-      } else {
-        await interaction.reply({
-          content: '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
-          flags: [MessageFlags.Ephemeral],
-        });
-      }
-    }
-  }
-
   // Inicializa o bot
   public async start() {
     const app = App.getInstance();
@@ -62,16 +36,42 @@ export class ExtendedClient extends Client {
       await RegisterCommands(this);
 
       // Listener central para interações de chat input
-      this.on('interactionCreate', async (interaction) => {
+      this.on('interactionCreate', async (i) => {
         // comandos slash
-        if (interaction.isChatInputCommand()) {
-          const command = app.commands.get(interaction.commandName);
-          if (command) await command.run(interaction);
+        if (i.isChatInputCommand()) {
+          const command = app.commands.get(i.commandName);
+          if (!command) return;
+
+          try {
+            await command.run(i, this);
+          } catch (err) {
+            console.error(err);
+            if (i.replied || i.deferred) {
+              await i.followUp({
+                content:
+                  '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
+                flags: [MessageFlags.Ephemeral],
+              });
+            } else {
+              await i.reply({
+                content:
+                  '😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!',
+                flags: [MessageFlags.Ephemeral],
+              });
+            }
+          }
+        }
+
+        if (i.isAutocomplete()) {
+          const focused = i.options.getFocused();
+          const command = app.commands.get(i.commandName);
+          if (command && command.autocomplete) await command.autocomplete(i, focused);
+          return;
         }
 
         // qualquer interação (botão, modal, select)
-        if (isResponder(interaction)) {
-          await app.responders.run(interaction);
+        if (isResponder(i)) {
+          await app.responders.run(i);
           return;
         }
       });

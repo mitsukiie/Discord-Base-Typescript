@@ -5,6 +5,9 @@ import {
   APIApplicationCommandOption,
   APIApplicationCommandBasicOption,
   ClientEvents,
+  AutocompleteInteraction,
+  GuildMember,
+  MessageFlags,
 } from 'discord.js';
 import { readdirSync } from 'fs';
 import path from 'path';
@@ -22,26 +25,24 @@ function Creators() {
         name: command.name,
         description: command.description,
         type: command.type,
-        default_member_permissions: command.defaultMemberPermission ?? undefined,
-        dm_permission: command.dmPermission ?? true,
-        nsfw: command.nsfw ?? false,
         options: command.options ?? [],
-        name_localizations: command.nameLocalizations ?? {},
-        description_localizations: command.descriptionLocalizations ?? {},
-        ...(command.integrationTypes && command.integrationTypes.length > 0
-          ? { integration_types: command.integrationTypes }
-          : {}),
+        defaultmemberpermissions: command.defaultMemberPermission ?? undefined,
+        dmpermission: command.dmPermission ?? true,
+        botpermission: command.botpermission ?? null,
+        allowids: command.allowIds ?? [],
+        nsfw: command.nsfw ?? false,
       };
 
       return {
         data,
+        autocomplete: command.autocomplete,
         run: command.run,
       };
     },
 
     createSubcommand: async function (name: string, directory: string): Promise<any> {
       const app = App.getInstance();
-      const subcommands: Record<string, Command> = {};
+      const subcommands: Record<string, any> = {};
       const options: APIApplicationCommandOption[] = [];
 
       const files = readdirSync(directory).filter((f) => f.endsWith('.ts'));
@@ -81,19 +82,64 @@ function Creators() {
           type: ApplicationCommandType.ChatInput,
           options,
         },
-        run: async (
-          interaction: ChatInputCommandInteraction,
-          client?: ExtendedClient,
-        ) => {
-          const name = interaction.options.getSubcommand();
+        autocomplete: (i: AutocompleteInteraction, focused: string) => {
+          const name = i.options.getSubcommand();
+          const sub = subcommands[name];
+          return sub?.autocomplete?.(i, focused);
+        },
+        run: async (i: ChatInputCommandInteraction, client?: ExtendedClient) => {
+          const name = i.options.getSubcommand();
           const sub = subcommands[name];
           if (!sub) {
-            return interaction.reply({
+            return i.reply({
               content: 'Subcomando não encontrado.',
               ephemeral: true,
             });
           }
-          return sub.run(interaction, client);
+
+          if (sub.data.allowids.length > 0 && !sub.data.allowids.includes(i.user.id)) {
+            return i.reply({
+              content: 'Você não tem permissão para usar este subcomando',
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
+
+          if (
+            sub.data.botpermission &&
+            !i.guild?.members.me?.permissions.has(sub.data.botpermission)
+          ) {
+            return i.reply({
+              content: `Eu preciso da permissão **${sub.data.botpermission}** para executar este subcomando.`,
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
+
+          if (sub.data.defaultmemberpermissions) {
+            const member = i.member as GuildMember;
+
+            if (!member.permissions.has(sub.data.defaultmemberpermissions)) {
+              return i.reply({
+                content: 'Você não tem permissão para usar este subcomando.',
+                flags: [MessageFlags.Ephemeral],
+              });
+            }
+          }
+
+          if (sub.data.nsfw && i.channel && 'nsfw' in i.channel && !i.channel.nsfw) {
+            return i.reply({
+              content: 'Este subcomando só pode ser usado em canais NSFW.',
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
+
+          if (i.guild === null && sub.data.dmpermission === false) {
+            return i.reply({
+              content: 'Este subcomando não pode ser usado em mensagens diretas.',
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
+
+          return sub.run(i, client);
         },
       };
     },

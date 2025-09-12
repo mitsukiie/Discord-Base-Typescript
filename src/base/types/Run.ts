@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ClientEvents } from 'discord.js';
+import { AutocompleteInteraction, ClientEvents } from 'discord.js';
 import { ExtendedClient } from '#base';
 import {
   CommandInteraction,
@@ -23,3 +23,5 @@ export type RunResponder<T extends ResponderType, P = any> = (
   interaction: ResponderInteraction<T>,
   params?: P,
 ) => any;
+
+export type RunAutoComplete = (i: AutocompleteInteraction, focused: string) => any;
