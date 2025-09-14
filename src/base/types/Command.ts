@@ -35,8 +35,8 @@ export type Command<Type extends CommandType = CommandType> = {
   name: string;
   description: string;
   type: Type;
+  cooldown?: number
   options?: APIApplicationCommandOption[];
-  autocomplete?: RunAutoComplete;
 
   defaultMemberPermission?: PermissionResolvable | null;
   botpermission?: keyof typeof PermissionFlagsBits | null;
@@ -45,5 +45,6 @@ export type Command<Type extends CommandType = CommandType> = {
   nsfw?: boolean;
   allowIds?: string[] | null;
 
+  autocomplete?: RunAutoComplete;
   run: RunCommand<Type>;
 };

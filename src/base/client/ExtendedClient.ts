@@ -39,11 +39,22 @@ export class ExtendedClient extends Client {
       this.on('interactionCreate', async (i) => {
         // comandos slash
         if (i.isChatInputCommand()) {
-          const command = app.commands.get(i.commandName);
+          const name = i.commandName;
+          const id = i.user.id;
+          const command = app.commands.get(name);
           if (!command) return;
+
+          if (app.cooldowns.isOnCooldown(id, name)) {
+            const remaining = app.cooldowns.get(id, name) / 1000;
+            return i.reply({
+              content: `⏳ Calma aí! Você precisa esperar **${remaining.toFixed(1)}s** antes de usar esse comando de novo.`,
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
 
           try {
             await command.run(i, this);
+            app.cooldowns.set(id, name, command.cooldown ?? undefined);
           } catch (err) {
             console.error(err);
             if (i.replied || i.deferred) {
