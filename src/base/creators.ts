@@ -106,10 +106,9 @@ async function CheckPermission(
   command: Command
 ) {
   const member = i.member as GuildMember;
-  if (!command.allowIds) return;
 
   // 1️⃣ allowIds
-  if (command.allowIds.length > 0 && !command.allowIds.includes(i.user.id)) {
+  if (command.allowIds &&command.allowIds.length > 0 && !command.allowIds.includes(i.user.id)) {
     await i.reply({
       content: 'Você não tem permissão para usar este subcomando',
       flags: [MessageFlags.Ephemeral],
