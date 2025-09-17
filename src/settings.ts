@@ -21,6 +21,7 @@ export const settings: Settings = {
   },
 
   bot: {
+    cooldown: 3, // Cooldown padrão (3 segundos)
     guildID: [], // Usado para registrar os comandos apenas em um servidor
   },
 };

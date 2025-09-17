@@ -11,10 +11,7 @@ export interface Settings {
   };
 
   bot: {
-    /**
-     * Guild ID
-     * Usado para registrar os comandos apenas em um servidor
-     */
+    cooldown: number;
     guildID?: string[];
   };
 }
