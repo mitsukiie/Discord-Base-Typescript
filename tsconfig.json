@@ -23,7 +23,6 @@
       "#base": ["./src/base"],
       "#types": ["./src/base/types"],
       "#utils": ["./src/base/utils"],
-      "#settings": ["./src/settings.ts"]
     }
   },
   "include": ["src"]

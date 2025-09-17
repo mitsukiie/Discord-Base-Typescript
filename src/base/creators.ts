@@ -25,12 +25,11 @@ function Creators() {
     },
 
     createSubcommand: async function (name: string, directory: string): Promise<any> {
-      const app = App.getInstance();
       const subcommands: Record<string, Command> = {};
       const options: APIApplicationCommandOption[] = [];
 
       const files = readdirSync(directory).filter((f) => f.endsWith('.ts'));
-      if (app.config.terminal.showSlashCommandsFiles) {
+      if (settings.terminal.showSlashCommandsFiles) {
         logger.info(`Carregando ${files.length} subcomandos do grupo "${name}"...`);
       }
 
@@ -53,7 +52,7 @@ function Creators() {
             options: sub.options as APIApplicationCommandBasicOption[],
           });
 
-          if (app.config.terminal.showSlashCommandsFiles) {
+          if (settings.terminal.showSlashCommandsFiles) {
             logger.success(`Subcomando carregado: ${sub.name}`);
           }
         }),

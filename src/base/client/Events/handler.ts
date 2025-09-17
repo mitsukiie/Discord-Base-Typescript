@@ -11,7 +11,7 @@ export async function RegisterEvents(client: ExtendedClient) {
   const app = App.getInstance();
   const files = await glob(`./src/events/**/*.ts`);
 
-  if (app.config.terminal.showEventsFiles) {
+  if (settings.terminal.showEventsFiles) {
     logger.info('🔄 Iniciando o carregamento de eventos...');
     logger.success(`📂 Total de eventos encontrados: ${files.length}`);
   }
@@ -40,7 +40,7 @@ export async function RegisterEvents(client: ExtendedClient) {
       client.on(event.name, (...args) => event.run(...args, client));
     }
 
-    if (app.config.terminal.showEventsRegistred) {
+    if (settings.terminal.showEventsRegistred) {
       logger.success(`⚡ Evento registrado: ${event.name}`);
     }
   });

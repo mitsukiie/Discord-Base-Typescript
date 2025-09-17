@@ -1,6 +1,5 @@
 import { CommandManager, EventManager, ResponderManager } from './client/index';
 import { CooldownManager } from './utils/Cooldown';
-import { settings } from '#settings';
 
 export class App {
   private static instance: App | null = null;
@@ -9,8 +8,6 @@ export class App {
   public readonly cooldowns = new CooldownManager();
   public readonly events = new EventManager();
   public readonly responders = new ResponderManager();
-
-  public readonly config = settings;
 
   private constructor() {
     this.commands = new CommandManager();

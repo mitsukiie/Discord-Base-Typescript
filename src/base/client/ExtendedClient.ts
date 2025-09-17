@@ -6,10 +6,13 @@ import {
   MessageFlags,
 } from 'discord.js';
 
+
 // Importações internas do projeto
 import { App } from '#base';
 import { RegisterCommands, RegisterEvents } from './';
 import { isResponder, logger } from '#utils';
+
+import '../settings'
 
 export class ExtendedClient extends Client {
   public commands: Collection<string, any> = new Collection();

@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { App } from '../app';
 
 /**
  * Logger customizado do bot
@@ -16,8 +15,7 @@ import { App } from '../app';
  */
 
 async function info(msg: any) {
-  const app = App.getInstance();
-  switch (app.config.terminal.mode) {
+  switch (settings.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(
@@ -37,8 +35,7 @@ async function info(msg: any) {
 }
 
 async function warn(msg: any) {
-  const app = App.getInstance();
-  switch (app.config.terminal.mode) {
+  switch (settings.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(
@@ -58,8 +55,7 @@ async function warn(msg: any) {
 }
 
 async function error(msg: any) {
-  const app = App.getInstance();
-  switch (app.config.terminal.mode) {
+  switch (settings.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.error(
@@ -79,8 +75,7 @@ async function error(msg: any) {
 }
 
 async function success(msg: any) {
-  const app = App.getInstance();
-  switch (app.config.terminal.mode) {
+  switch (settings.terminal.mode) {
     case 'informativo':
       const date = new Date();
       console.log(

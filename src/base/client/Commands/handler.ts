@@ -16,7 +16,7 @@ export async function RegisterCommands(client: ExtendedClient) {
   const folders = path.join(process.cwd(), 'src', 'commands');
   const categories = readdirSync(folders);
 
-  if (app.config.terminal.showSlashCommandsFiles) {
+  if (settings.terminal.showSlashCommandsFiles) {
     logger.info('🔄 Iniciando o carregamento de comandos...');
     logger.success(`📂 Total de categorias: ${categories.length}`);
   }
@@ -26,7 +26,7 @@ export async function RegisterCommands(client: ExtendedClient) {
       const categoryPath = path.join(folders, categorie);
       const entries = readdirSync(categoryPath, { withFileTypes: true });
 
-      if (app.config.terminal.showSlashCommandsFiles) {
+      if (settings.terminal.showSlashCommandsFiles) {
         logger.success(`📂 Categoria: ${categorie} - ${entries.length} comandos`);
       }
 
@@ -37,9 +37,9 @@ export async function RegisterCommands(client: ExtendedClient) {
           // Caso seja uma pasta, tratamos como grupo de subcomandos
           if (entry.isDirectory()) {
             const command = await createSubcommand(entry.name, fullPath);
-            const formatted = FormatCommand(command);
+            const cmd = serialize(command);
 
-            commands.push(formatted.data);
+            commands.push(cmd);
             app.commands.add(entry.name, command);
           }
 
@@ -54,13 +54,13 @@ export async function RegisterCommands(client: ExtendedClient) {
               return;
             }
 
-            const formatted = FormatCommand(command);
+            const cmd = serialize(command);
 
-            commands.push(formatted.data);
-            app.commands.add(formatted.data.name, command);
+            commands.push(cmd);
+            app.commands.add(cmd.name, command);
 
-            if (app.config.terminal.showSlashCommandsFiles) {
-              logger.success(`📄 Comando carregado: ${formatted.data.name}`);
+            if (settings.terminal.showSlashCommandsFiles) {
+              logger.success(`📄 Comando carregado: ${cmd.name}`);
             }
           } else {
             logger.warn(`⚠️ Entrada ignorada: ${entry.name}`);
@@ -78,8 +78,8 @@ export async function RegisterCommands(client: ExtendedClient) {
   const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
   try {
-    if (app.config.bot.guildID && app.config.bot.guildID?.length > 0) {
-      const guilds = app.config.bot.guildID;
+    if (settings.bot.guildID && settings.bot.guildID?.length > 0) {
+      const guilds = settings.bot.guildID;
 
       const servers = await Promise.all(
         guilds.map(async (ID) => {
@@ -107,7 +107,7 @@ export async function RegisterCommands(client: ExtendedClient) {
         }),
       );
 
-      if (app.config.terminal.showSlashCommandsRegistred) {
+      if (settings.terminal.showSlashCommandsRegistred) {
         logger.info(JSON.stringify(servers, null, 2));
       }
     } else {
@@ -115,7 +115,7 @@ export async function RegisterCommands(client: ExtendedClient) {
         body: commands,
       });
 
-      if (app.config.terminal.showSlashCommandsRegistred) {
+      if (settings.terminal.showSlashCommandsRegistred) {
         logger.success(`✅ Comandos atualizados: ${commands.length}`);
       }
     }
@@ -124,9 +124,8 @@ export async function RegisterCommands(client: ExtendedClient) {
   }
 }
 
-function FormatCommand(command: Command) {
+function serialize(command: Command) {
   return {
-    data: {
     name: command.name,
     description: command.description || 'Sem descrição',
     type: command.type ?? 1,
@@ -136,8 +135,5 @@ function FormatCommand(command: Command) {
     dmPermission: command.dmPermission !== undefined ? command.dmPermission : true,
     nsfw: command.nsfw || false,
     allowIds: command.allowIds || null,
-    },
-    autocomplete: command.autocomplete,
-    run: command.run,
   };
 }
