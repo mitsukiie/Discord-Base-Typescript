@@ -9,7 +9,7 @@ import { createSubcommand } from '../../creators';
 import { Command } from '#types';
 import { logger } from '#utils';
 
-export async function RegisterCommands(client: ExtendedClient) {
+export async function Commands(client: ExtendedClient) {
   const app = App.getInstance();
   const commands: any[] = [];
 

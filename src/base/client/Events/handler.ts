@@ -7,7 +7,7 @@ import { ExtendedClient, App } from '#base';
 import { Event } from '#types';
 import { logger } from '#utils';
 
-export async function RegisterEvents(client: ExtendedClient) {
+export async function Events(client: ExtendedClient) {
   const app = App.getInstance();
   const files = await glob(`./src/events/**/*.ts`);
 
