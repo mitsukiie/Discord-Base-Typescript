@@ -1,5 +1,5 @@
-import { createCommand, createResponder } from '#base';
-import { ResponderType, CommandType } from '#types';
+import { createCommand, createResponder } from '@base';
+import { ResponderType, CommandType } from '@types';
 import {
   ModalBuilder,
   TextInputBuilder,

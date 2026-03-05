@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js';
-import { CommandType } from '#types';
-import { createCommand } from '#base';
+import { CommandType } from '@types';
+import { createCommand } from '@base';
 
 /**
  * Comando /user info (dentro da categoria "user")

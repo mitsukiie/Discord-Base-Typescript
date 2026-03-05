@@ -20,9 +20,9 @@
     "noPropertyAccessFromIndexSignature": false,
 
     "paths": {
-      "#base": ["./src/base"],
-      "#types": ["./src/base/types"],
-      "#utils": ["./src/base/utils"],
+      "@base": ["./src/base"],
+      "@types": ["./src/base/types"],
+      "@utils": ["./src/base/utils"],
     }
   },
   "include": ["src"]

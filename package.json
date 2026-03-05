@@ -1,28 +1,25 @@
 {
   "name": "discord-base-typescript",
   "main": "src/bot.ts",
-  "module": "src/bot.ts",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "scripts": {
-    "i": "bun install",
-    "start": "bun ./src/bot.ts",
+    "start": "tsx --env-file=.env src/bot.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
   "dependencies": {
-    "@types/node": "^24.3.0",
     "axios": "^1.11.0",
     "chalk": "^5.6.0",
     "discord.js": "^14.22.1",
     "glob": "^11.0.3",
     "prettier": "^3.6.2",
     "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

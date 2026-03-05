@@ -11,7 +11,7 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-import { RunCommand, RunAutoComplete } from '#types';
+import { RunCommand, RunAutoComplete } from '@types';
 
 export enum CommandType {
   ChatInput = ApplicationCommandType.ChatInput,

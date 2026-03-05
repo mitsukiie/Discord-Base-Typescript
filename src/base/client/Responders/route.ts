@@ -1,4 +1,4 @@
-import { Responder, ResponderType } from "#types";
+import { Responder, ResponderType } from "@types";
 
 interface Route<T> extends Responder<string, ResponderType, T> {
     parts: string[];

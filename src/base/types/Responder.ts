@@ -10,7 +10,7 @@ import {
   CacheType,
 } from 'discord.js';
 
-import { RunResponder } from '#types';
+import { RunResponder } from '@types';
 
 export enum ResponderType {
   Button = 'button',

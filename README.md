@@ -15,13 +15,12 @@
 # ⚡ Discord.js v14 Typescript Base
 
 Um **template moderno e flexível** para criação de bots com [discord.js v14](https://discord.js.org) usando **TypeScript**.
-Este é o sucessor do repositório [djs-template](https://github.com/mitsukiie/Discord-Base-Javascript).
 
 ---
 
 ## ✨ Características
 
-- 📂 **Slash Command Handler** (suporte a comandos globais e de guilda)
+- 📂 **Slash Command Handler** (suporte a comandos globais e de servidores)
 - 🧩 **Subcommand Groups** (suporte a subcomandos)
 - 🎯 **Event Handler** (eventos organizados automaticamente)
 - ⚙️ **Configuração personalizável** no `settings.ts`
@@ -33,12 +32,12 @@ Este é o sucessor do repositório [djs-template](https://github.com/mitsukiie/D
 
 ### Pré-requisitos
 
-- [Bun](https://bun.sh/) instalado
+- [Node.js](https://nodejs.org/) instalado
 
 ### Instale as dependências:
 
 ```bash
-bun install
+npm install
 ```
 
 ### Configure o `.env`
@@ -88,10 +87,10 @@ bot: {
 Inicie o bot facilmente com:
 
 ```bash
-bun start
+npm run start
 ```
 
-> O Bun compila e executa automaticamente, sem precisar rodar `tsc` manualmente.
+> O projeto roda TypeScript diretamente no runtime, então não é necessário compilar com `tsc` antes de executar.
 
 ---
 

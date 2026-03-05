@@ -1,8 +1,7 @@
-import { ExtendedClient } from '#base';
+import { Bootstrap } from '@base';
 
 async function main() {
-  const client = new ExtendedClient();
-  await client.start();
+  await Bootstrap.init();
 }
 
 main();

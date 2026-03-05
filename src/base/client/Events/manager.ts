@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import type { Event } from '#types';
+import type { Event } from '@types';
 
 import { Events } from './handler';
 

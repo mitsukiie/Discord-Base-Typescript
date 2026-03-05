@@ -1,5 +1,5 @@
 import { ClientEvents } from 'discord.js';
-import { RunEvent } from '#types';
+import { RunEvent } from '@types';
 
 export type Event<K extends keyof ClientEvents = keyof ClientEvents> = {
   name: K;

@@ -3,9 +3,9 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient, App } from '#base';
-import { Event } from '#types';
-import { logger } from '#utils';
+import { ExtendedClient, App } from '@base';
+import { Event } from '@types';
+import { logger } from '@utils';
 
 export async function Events(client: ExtendedClient) {
   const app = App.getInstance();

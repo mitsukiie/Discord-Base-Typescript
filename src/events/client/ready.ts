@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
-import { createEvent } from '#base';
-import { logger } from '#utils';
+import { createEvent } from '@base';
+import { logger } from '@utils';
 
 export default createEvent({
   name: Events.ClientReady,

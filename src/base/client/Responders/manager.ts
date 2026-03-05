@@ -1,5 +1,5 @@
-import { ResponderInteraction, ResponderType } from '#types';
-import { getType } from '#utils';
+import { ResponderInteraction, ResponderType } from '@types';
+import { getType } from '@utils';
 import { session } from './session';
 import { route } from './route';
 

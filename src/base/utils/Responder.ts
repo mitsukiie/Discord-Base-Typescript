@@ -1,5 +1,5 @@
 import { Interaction } from 'discord.js';
-import { ResponderType, ResponderInteraction } from '#types';
+import { ResponderType, ResponderInteraction } from '@types';
 
 export function getType(interaction: Interaction): ResponderType {
   if (interaction.isButton()) return ResponderType.Button;

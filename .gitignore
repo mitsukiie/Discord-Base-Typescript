@@ -1,6 +1,6 @@
-# dependencies (bun install)
+# dependencies (npm install)
 node_modules
-bun.lock
+package_lock.json
 
 # dotenv environment variable files
 .env

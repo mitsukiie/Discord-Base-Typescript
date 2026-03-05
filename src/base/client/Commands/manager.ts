@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import type { Command } from '#types';
+import type { Command } from '@types';
 
 import { Commands } from './handler';
 

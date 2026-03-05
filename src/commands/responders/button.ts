@@ -1,5 +1,5 @@
-import { createCommand, createResponder } from '#base';
-import { ResponderType, CommandType } from '#types';
+import { createCommand, createResponder } from '@base';
+import { ResponderType, CommandType } from '@types';
 import { ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags } from 'discord.js';
 import { z } from 'zod';
 

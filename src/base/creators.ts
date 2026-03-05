@@ -14,9 +14,9 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient, App } from '#base';
-import { Command, Event, Responder, ResponderType, CommandType } from '#types';
-import { logger } from '#utils';
+import { ExtendedClient, App } from '@base';
+import { Command, Event, Responder, ResponderType, CommandType } from '@types';
+import { logger } from '@utils';
 
 function Creators() {
   return {

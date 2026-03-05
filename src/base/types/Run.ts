@@ -1,11 +1,11 @@
 import { AutocompleteInteraction, ClientEvents } from 'discord.js';
-import { ExtendedClient } from '#base';
+import { ExtendedClient } from '@base';
 import {
   CommandInteraction,
   CommandType,
   ResponderInteraction,
   ResponderType,
-} from '#types';
+} from '@types';
 
 // Run event
 export type RunEvent<K extends keyof ClientEvents = keyof ClientEvents> = (

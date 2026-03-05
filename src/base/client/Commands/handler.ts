@@ -4,10 +4,10 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient, App } from '#base';
+import { ExtendedClient, App } from '@base';
 import { createSubcommand } from '../../creators';
-import { Command } from '#types';
-import { logger } from '#utils';
+import { Command } from '@types';
+import { logger } from '@utils';
 
 export async function Commands(client: ExtendedClient) {
   const app = App.getInstance();
@@ -82,7 +82,7 @@ export async function Commands(client: ExtendedClient) {
       const guilds = settings.bot.guildID;
 
       const servers = await Promise.all(
-        guilds.map(async (ID) => {
+        guilds.map(async (ID: string) => {
           try {
             const guild = await client.guilds.fetch(ID).catch(() => null);
 

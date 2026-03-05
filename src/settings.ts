@@ -1,4 +1,4 @@
-import { Settings } from '#types';
+import { Settings } from '@types';
 
 /**
  * Configurações do bot
