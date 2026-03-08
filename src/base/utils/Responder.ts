@@ -1,7 +1,7 @@
 import { Interaction } from 'discord.js';
 import { ResponderType, ResponderInteraction } from '@types';
 
-export function getType(interaction: Interaction): ResponderType {
+export function getType(interaction: Interaction): ResponderType | null {
   if (interaction.isButton()) return ResponderType.Button;
   if (interaction.isModalSubmit()) return ResponderType.Modal;
   if (interaction.isStringSelectMenu()) return ResponderType.SelectString;
@@ -9,7 +9,7 @@ export function getType(interaction: Interaction): ResponderType {
   if (interaction.isRoleSelectMenu()) return ResponderType.SelectRole;
   if (interaction.isChannelSelectMenu()) return ResponderType.SelectChannel;
   if (interaction.isMentionableSelectMenu()) return ResponderType.SelectMentionable;
-  return ResponderType.Button;
+  return null;
 }
 
 export function isResponder(

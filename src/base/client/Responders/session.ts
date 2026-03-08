@@ -1,25 +1,42 @@
+type Cache = 'once' | 'temporary';
+type Data = {
+  expireAt?: number;
+};
+
 export class session {
-    private sessions: Map<string, { valid: boolean; expireAt?: number }> = new Map();
+  private sessions = new Map<string, Data>();
 
-    add(id: string, cache: 'once' | 'temporary', expire?: number) {
-        if (cache === 'once') {
-            this.sessions.set(id, { valid: false });
-        } else if (cache === 'temporary' && expire) {
-            this.sessions.set(id, { valid: true, expireAt: Date.now() + expire });
-        }
+  add(id: string, cache: Cache, expire?: number) {
+    if (cache === 'once') {
+      this.sessions.set(id, {});
+      return;
     }
 
-    isExpired(id: string): boolean {
-        const i = this.sessions.get(id);
-        if (!i) return false;
+    if (cache === 'temporary' && expire) {
+      this.sessions.set(id, {
+        expireAt: Date.now() + expire,
+      });
+    }
+  }
 
-        if (i.expireAt && Date.now() > i.expireAt) {
-            i.valid = false;
-        }
-        return !i.valid;
+  isExpired(id: string): boolean {
+    const session = this.sessions.get(id);
+    if (!session) return false;
+
+    if (session.expireAt && Date.now() > session.expireAt) {
+      this.sessions.delete(id);
+      return true;
     }
 
-    has(id: string) {
-        return this.sessions.has(id);
+    if (!session.expireAt) {
+      this.sessions.delete(id);
+      return true;
     }
+
+    return false;
+  }
+
+  has(id: string) {
+    return this.sessions.has(id);
+  }
 }

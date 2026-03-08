@@ -89,7 +89,11 @@ function Creators() {
       return options;
     },
 
-    createResponder: function <T extends ResponderType>(opts: Responder<string, T, any>) {
+    createResponder: function <
+      const Path extends string,
+      Type extends ResponderType,
+      Parsed,
+    >(opts: Responder<Path, Type, Parsed>) {
       const app = App.getInstance();
       app.responders.register(opts);
       return opts;
@@ -100,14 +104,15 @@ function Creators() {
 export const { createCommand, createSubcommand, createEvent, createResponder } =
   Creators();
 
-async function CheckPermission(
-  i: ChatInputCommandInteraction, 
-  command: Command
-) {
+async function CheckPermission(i: ChatInputCommandInteraction, command: Command) {
   const member = i.member as GuildMember;
 
   // 1️⃣ allowIds
-  if (command.allowIds &&command.allowIds.length > 0 && !command.allowIds.includes(i.user.id)) {
+  if (
+    command.allowIds &&
+    command.allowIds.length > 0 &&
+    !command.allowIds.includes(i.user.id)
+  ) {
     await i.reply({
       content: 'Você não tem permissão para usar este subcomando',
       flags: [MessageFlags.Ephemeral],
@@ -122,7 +127,7 @@ async function CheckPermission(
   ) {
     await i.reply({
       content: `Eu preciso da permissão **${command.botpermission}** para executar este subcomando.`,
-        flags: [MessageFlags.Ephemeral],
+      flags: [MessageFlags.Ephemeral],
     });
     return false;
   }

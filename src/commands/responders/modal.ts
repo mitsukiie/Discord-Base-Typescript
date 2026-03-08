@@ -9,14 +9,15 @@ import {
 } from 'discord.js';
 import { z } from 'zod';
 
+const schema = z.object({ name: z.string().min(2).max(20) });
 createResponder({
   customId: 'responder/:name',
-  parse: z.object({ name: z.string().min(2).max(20) }).parse,
-  types: ResponderType.Modal,
-  async run(interaction, { name }) {
+  parse: schema.parse,
+  type: ResponderType.Modal,
+  async run(interaction, params) {
     const text = interaction.fields.getTextInputValue('input');
     await interaction.reply({
-      content: `@${name} seu texto: \n> ${text}`,
+      content: `@${params.name} seu texto: \n> ${text}`,
       flags: [MessageFlags.Ephemeral],
     });
   },

@@ -7,7 +7,7 @@ const schema = z.object({ name: z.string().min(2).max(20) });
 
 createResponder({
   customId: 'responder/:name',
-  types: ResponderType.SelectString,
+  type: ResponderType.SelectString,
   parse: schema.parse,
   async run(interaction, { name }) {
     const values = interaction.values.join(', ');

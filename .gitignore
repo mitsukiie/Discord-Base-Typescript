@@ -1,6 +1,6 @@
 # dependencies (npm install)
 node_modules
-package_lock.json
+package-lock.json
 
 # dotenv environment variable files
 .env

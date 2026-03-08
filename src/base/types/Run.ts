@@ -5,6 +5,7 @@ import {
   CommandType,
   ResponderInteraction,
   ResponderType,
+  ResponderParse,
 } from '@types';
 
 // Run event
@@ -19,9 +20,9 @@ export type RunCommand<T extends CommandType> = (
 ) => any;
 
 // Run responder
-export type RunResponder<T extends ResponderType, P = any> = (
+export type RunResponder<T extends ResponderType, Path extends string, P> = (
   interaction: ResponderInteraction<T>,
-  params?: P,
-) => any;
+  params: ResponderParse<P, Path>,
+) => unknown | Promise<unknown>;
 
 export type RunAutoComplete = (i: AutocompleteInteraction, focused: string) => any;

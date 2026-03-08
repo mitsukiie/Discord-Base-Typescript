@@ -1,14 +1,10 @@
 import { createCommand, createResponder } from '@base';
 import { ResponderType, CommandType } from '@types';
 import { ButtonBuilder, ButtonStyle, ActionRowBuilder, MessageFlags } from 'discord.js';
-import { z } from 'zod';
-
-const schema = z.object({ id: z.coerce.number() });
 
 createResponder({
   customId: 'responder/:id',
-  types: ResponderType.Button,
-  parse: schema.parse,
+  type: ResponderType.Button,
   async run(interaction, { id }) {
     await interaction.reply({
       content: `Olá seu id é ${id}`,

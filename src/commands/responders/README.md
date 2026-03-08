@@ -1,11 +1,12 @@
 # 📌 Responders
 
-Os **responders** permitem lidar com interações dinâmicas no Discord, como botões, selects e modais.  
-Eles usam `customId` com parâmetros e podem ter validação via **Zod** ou manualmente.
+Os **responders** permitem lidar com interações dinâmicas no Discord, como **botões, selects e modais** usando `customId` com parâmetros. 
+
+Eles funcionam de forma semelhante a **rotas**, permitindo extrair valores diretamente do `customId` e opcionalmente validá-los usando **Zod** ou funções customizadas.
 
 ---
 
-## 🚀 Exemplos
+# 🚀 Exemplos
 
 - `src/commands/responders/button.ts` → responder para `botão`
 - `src/commands/responders/modal.ts` → responder para `modal`
@@ -13,67 +14,115 @@ Eles usam `customId` com parâmetros e podem ter validação via **Zod** ou manu
 
 ---
 
-## 📖 Como funciona
+# 📖 Como funciona
 
-### 🔹 Parâmetros
+## 🔹 Parâmetros na rota
+Parâmetros são definidos usando `:` dentro do `customId`.
 
-- Definidos na rota com `:param`
-  - Exemplo: `responder/:id`
-  - Pode ter múltiplos: `responder/:id/:name`
-
-- Sempre chegam como **string** se não houver parse
-- O `parse` pode transformar/validar:
-  - Com **Zod**:
-
-    ```ts
-    const schema = z.object({ id: z.coerce.string() });
-    ...
-    parse: schema.parse
-    ```
-
-  - Manualmente:
-
-    ```ts
-    parse: (params) => ({ id: Number(params.id), name: params.name });
-    ```
-
-### 🔹 Cache
-
-- `permanent` → nunca expira
-- `once` → só pode ser usado uma vez
-  _(dica: use IDs únicos para cada interação)_
-- `temporary` → válido até o tempo definido em `expire` (ms)
-
-### 🔹 Tipos de interação
-
-- **Button** → `ResponderType.Button`
-- **Select Menu** → `ResponderType.Select`
-- **Modal** → `ResponderType.Modal`
-- **SelectString** → `ResponderType.SelectString`
-- **SelectUser** → `ResponderType.SelectUser`
-- **SelectRole** → `ResponderType.SelectRole`
-- **SelectChannel** → `ResponderType.SelectChannel`
-- **SelectString** → `ResponderType.SelectString`
-- **SelectMentionable** → `ResponderType.SelectMentionable`
-
-A função `run` sempre recebe:
-
+Exemplo:
 ```ts
-run(interaction, params);
+customId: "responder/:id"
 ```
 
-Onde `params` são os valores extraídos da rota.
+Também é possível ter múltiplos parâmetros:
+```ts
+customId: "responder/:id/:name"
+```
+
+Se **nenhum `parse` for definido**, os parâmetros sempre chegam como string.
 
 ---
 
-## 📌 Exemplo sem parâmetros
+## 🔹 Parse de parâmetros
+O `parse` permite transformar ou validar os parâmetros antes de executar o responder.
+
+Ele pode ser:
+
+* um **schema Zod**
+* uma **função manual**
+
+```ts
+parse: schema.parse
+// ou
+parse: (params) => ({ id: Number(params.id) })
+```
+
+Se nenhum `parse` for definido, os parâmetros serão **strings**.
+
+---
+
+## 🔹 Cache
+Os responders podem ter controle de uso usando `cache`.
+
+### once
+Permite usar o responder **apenas uma vez**.
+```ts
+cache: "once"
+```
+
+### temporary
+Permite usar o responder por um **tempo limitado**.
+```ts
+cache: "temporary",
+expire: 60000 // 1 minuto
+```
+
+---
+
+## 🔹 Tipos de interação
+Tipos disponíveis em ResponderType:
+
+- **Button**
+- **Select Menu**
+- **Modal**
+- **SelectString**
+- **SelectUser**
+- **SelectRole**
+- **SelectChannel**
+- **SelectString**
+- **SelectMentionable**
+
+Exemplo:
+```ts
+type: ResponderType.Button
+```
+
+---
+
+## 🔹 Estrutura da função `run`
+A função `run` recebe dois parâmetros:
+
+```ts
+  run(interaction, params)
+```
+
+* **interaction** → interação do Discord tipada automaticamente
+* **params** → parâmetros extraídos do `customId`
+
+### Destructuring de parâmetros
+Você também pode usar **destructuring** diretamente nos parâmetros:
 
 ```ts
 createResponder({
-  customId: 'user/button',
-  types: ResponderType.Button,
+  customId: "user/:id/:name",
+  type: ResponderType.Button,
+
+  async run(interaction, { id, name }) {
+    await interaction.reply(`ID: ${id} | Nome: ${name}`);
+  },
+});
+```
+
+### Exemplo simples
+Se a rota não possuir parâmetros, o `params` pode ser omitido:
+
+```ts
+createResponder({
+  customId: "user/button",
+  type: ResponderType.Button,
+
   async run(interaction) {
-    await interaction.reply('Responder sem parâmetros!');
+    await interaction.reply("Responder sem parâmetros!");
   },
 });
 ```

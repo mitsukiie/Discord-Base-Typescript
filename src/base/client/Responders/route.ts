@@ -1,41 +1,63 @@
-import { Responder, ResponderType } from "@types";
+import { Responder, ResponderType } from '@types';
 
-interface Route<T> extends Responder<string, ResponderType, T> {
-    parts: string[];
+interface Route<Path extends string, T extends ResponderType, P> extends Responder<
+  Path,
+  T,
+  P
+> {
+  parts: string[];
 }
 
 export class route {
-    private routes: Map<string, Route<any>> = new Map();
+  private routes = new Map<ResponderType, Route<any, any, any>[]>();
 
-    create<T>(opts: Responder<string, ResponderType, T>) {
-        if (opts.cache === 'temporary' && !opts.expire) {
-            throw new Error("Responder with 'temporary' cache must have an expire time.");
-        }
-        const route: Route<T> = { ...opts, parts: opts.customId.split('/') };
-        this.routes.set(opts.customId, route);
-        return route;
+  create<Path extends string, T extends ResponderType, P>(opts: Responder<Path, T, P>) {
+    if (opts.cache === 'temporary' && !opts.expire) {
+      throw new Error('Temporary responders must define expire time.');
     }
 
-    find(id: any, type: any) {
-        return [...this.routes.values()].find((route) => {
-            if (!route.types.includes(type)) return false;
+    const route: Route<Path, T, P> = {
+      ...opts,
+      parts: opts.customId.split('/'),
+    };
 
-            const part = id.split('/');
-            if (part.length !== route.parts.length) return false;
+    const list = this.routes.get(opts.type) || [];
+    list.push(route);
+    this.routes.set(opts.type, list);
 
-            return route.parts.every((p: string, i: number) => p.startsWith(':') || p === part[i]);
-        });
+    return route;
+  }
+
+  find(id: string, type: ResponderType) {
+    const routes = this.routes.get(type);
+    if (!routes) return null;
+
+    const parts = id.split('/');
+
+    for (const route of routes) {
+      if (parts.length !== route.parts.length) continue;
+
+      const match = route.parts.every((part, i) => {
+        return part.startsWith(':') || part === parts[i];
+      });
+
+      if (match) return route;
     }
 
-    extract(id: string, route: Route<any>) {
-        const params: Record<string, string> = {}
+    return null;
+  }
 
-        id.split('/').forEach((value, i) => {
-            const part = route.parts[i]
-            if (!part) return false;
+  extract(id: string, route: Route<any, any, any>) {
+    const params: Record<string, string> = {};
+    const values = id.split('/');
 
-            if (part.startsWith(':')) params[part.slice(1)] = value
-        })
-        return params;
-    }
+    values.forEach((value, i) => {
+      const part = route.parts[i];
+      if (part?.startsWith(':')) {
+        const key = part.slice(1);
+        params[key] = value;
+      }
+    });
+    return params;
+  }
 }

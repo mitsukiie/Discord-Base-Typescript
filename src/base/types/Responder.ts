@@ -1,5 +1,4 @@
 import {
-  Interaction,
   ButtonInteraction,
   ModalSubmitInteraction,
   StringSelectMenuInteraction,
@@ -7,8 +6,9 @@ import {
   RoleSelectMenuInteraction,
   ChannelSelectMenuInteraction,
   MentionableSelectMenuInteraction,
-  CacheType,
 } from 'discord.js';
+
+import { ZodTypeAny, infer as zInfer } from 'zod/v3';
 
 import { RunResponder } from '@types';
 
@@ -22,43 +22,35 @@ export enum ResponderType {
   SelectMentionable = 'select.mentionable',
 }
 
-export type ResponderInteraction<Type extends ResponderType = ResponderType> =
-  Type extends ResponderType.Button
-    ? ButtonInteraction
-    : Type extends ResponderType.Modal
-      ? ModalSubmitInteraction
-      : Type extends ResponderType.SelectString
-        ? StringSelectMenuInteraction
-        : Type extends ResponderType.SelectUser
-          ? UserSelectMenuInteraction
-          : Type extends ResponderType.SelectRole
-            ? RoleSelectMenuInteraction
-            : Type extends ResponderType.SelectChannel
-              ? ChannelSelectMenuInteraction
-              : Type extends ResponderType.SelectMentionable
-                ? MentionableSelectMenuInteraction
-                : never;
+type Map = {
+  [ResponderType.Button]: ButtonInteraction;
+  [ResponderType.Modal]: ModalSubmitInteraction;
+  [ResponderType.SelectString]: StringSelectMenuInteraction;
+  [ResponderType.SelectUser]: UserSelectMenuInteraction;
+  [ResponderType.SelectRole]: RoleSelectMenuInteraction;
+  [ResponderType.SelectChannel]: ChannelSelectMenuInteraction;
+  [ResponderType.SelectMentionable]: MentionableSelectMenuInteraction;
+};
+export type ResponderInteraction<T extends ResponderType> = Map[T];
 
-export type Params<Route extends string> =
-  Route extends `${string}/:${infer Param}/${infer Rest}`
-    ? { [K in Param | keyof Params<Rest>]: any }
-    : Route extends `${string}/:${infer Param}`
-      ? { [K in Param]: any }
-      : Route extends `:${infer Param}/${infer Rest}`
-        ? { [K in Param | keyof Params<Rest>]: any }
-        : Route extends `:${infer Param}`
-          ? { [K in Param]: any }
-          : any;
+type Params<Path extends string> =
+  Path extends `${infer _Start}:${infer Param}/${infer Rest}`
+    ? { [K in Param | keyof Params<Rest>]: string }
+    : Path extends `${infer _Start}:${infer Param}`
+      ? { [K in Param]: string }
+      : {};
 
-export type Responder<
-  Path extends string,
-  Type extends ResponderType = ResponderType,
-  Parsed = Params<Path>,
-> = {
+export type ResponderParse<P, Path extends string> = P extends ZodTypeAny
+  ? zInfer<P>
+  : P extends (params: Params<Path>) => infer R
+    ? R
+    : Params<Path>;
+
+export type Responder<Path extends string, Type extends ResponderType, P = undefined> = {
   customId: Path;
-  types: Type;
-  parse?: (params: Params<Path>) => Parsed;
-  run: RunResponder<Type, Parsed>;
+  type: Type;
+  parse?: ZodTypeAny | ((params: Params<Path>) => any);
+  run: RunResponder<Type, Path, P>;
   cache?: 'once' | 'temporary';
   expire?: number;
 };
