@@ -2,8 +2,8 @@ import { ExtendedClient, App } from "@base";
 import { logger } from "@utils";
 import { Router } from "./Interactions";
 
-class Bootstrap {
-  public static async init() {
+const Bootstrap = {
+  async init() {
     const client = new ExtendedClient();
     const app = App.getInstance();
 

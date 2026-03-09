@@ -5,9 +5,9 @@ export class App {
   private static instance: App | null = null;
 
   public readonly commands: CommandManager;
-  public readonly cooldowns = new CooldownManager();
-  public readonly events = new EventManager();
-  public readonly responders = new ResponderManager();
+  public readonly cooldowns: CooldownManager;
+  public readonly events: EventManager;
+  public readonly responders: ResponderManager;
 
   private constructor() {
     this.commands = new CommandManager();

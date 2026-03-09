@@ -1,4 +1,3 @@
-// commands/ping.ts
 import { createCommand } from '@base';
 import { CommandType } from '@types';
 import { MessageFlags, ApplicationCommandOptionType } from 'discord.js';

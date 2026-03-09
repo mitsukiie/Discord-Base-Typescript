@@ -21,6 +21,7 @@
 
     "paths": {
       "@base": ["./src/base"],
+      "@ui": ["./src/base/ui"],
       "@types": ["./src/base/types"],
       "@utils": ["./src/base/utils"],
     }

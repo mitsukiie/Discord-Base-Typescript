@@ -1,3 +1,6 @@
+🇧🇷 Documentação em Português  
+🇺🇸 English documentation coming soon
+
 <div align="center">
   <br />
   <p>
@@ -98,10 +101,11 @@ npm run start
 
 Este template já vem com alguns exemplos para guiar você:
 
-- `src/commands/utils/ping.ts` → comando `/ping`
-- `src/commands/utils/fruit.ts` → comando com autocomplete
-- `src/commands/utils/user/ban.ts` → subcomando `/user ban`
-- `src/commands/responders/` → responders + modo de uso (README.md)
+- `src/commands/examples/ping.ts` → comando `/ping`
+- `src/commands/examples/fruit.ts` → comando com autocomplete
+- `src/commands/examples/user/ban.ts` → subcomando `/user ban`
+- `src/commands/responders/` → responders + guia de uso (README.md)
+- `src/commands/components/` → Display Components V2 + guia de uso (`README.md`)
 - `src/events/client/ready.ts` → evento `ready`
 
 ---
