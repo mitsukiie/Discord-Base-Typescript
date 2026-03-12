@@ -9,18 +9,18 @@ export default createCommand({
   type: CommandType.ChatInput,
 
   async run(interaction) {
-    const components = [
-      '## Select Menus Example',
-      'Cada select precisa ficar sozinho na propria row.',
+    const components = ui.render(
+      ui.text('## Select Menus Example'),
+      ui.text('Cada select precisa ficar sozinho na propria row.'),
       ui.row(
-        ui.select.string(
-          'select:string:demo',
-          [
+        ui.select.string({
+          customId: 'select:string:demo',
+          placeholder: 'String select',
+          options: [
             { label: 'Opcao A', value: 'a' },
             { label: 'Opcao B', value: 'b' },
           ],
-          { placeholder: 'String select' },
-        ),
+        }),
       ),
       ui.row(ui.select.user('select:user:demo', { placeholder: 'User select' })),
       ui.row(ui.select.role('select:role:demo', { placeholder: 'Role select' })),
@@ -36,8 +36,8 @@ export default createCommand({
           placeholder: 'Mentionable select',
         }),
       ),
-    ];
-    
+    );
+
     await message.reply(interaction, {
       ephemeral: true,
       components,

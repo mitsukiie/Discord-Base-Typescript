@@ -16,18 +16,20 @@ export default createCommand({
       },
     );
 
-    const components = ui.container(
-      '## Media Example',
-      ui.gallery(
-        ui.image('https://picsum.photos/id/1015/900/500', 'Imagem 1'),
-        ui.image('https://picsum.photos/id/1018/900/500', 'Imagem 2'),
+    const components = ui.render(
+      ui.container(
+        ui.text('## Gallery Example'),
+        ui.gallery(
+          ui.image('https://picsum.photos/id/1015/900/500', 'Imagem 1'),
+          ui.image('https://picsum.photos/id/1018/900/500', 'Imagem 2'),
+        ),
+        ui.file.fromAttachment(file),
       ),
-      ui.file.fromAttachment(file),
     );
 
     await message.reply(interaction, {
       ephemeral: true,
-      components: [components],
+      components,
     });
   },
 });

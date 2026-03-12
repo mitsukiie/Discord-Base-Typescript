@@ -1,8 +1,10 @@
 import { MessageFlags } from 'discord.js';
 
-import { DisplayInput } from '@types';
-
-import { collectAttachmentsFromDisplayInputs, toDisplayComponents } from './normalize';
+import {
+  getRenderedComponentsAttachments,
+  isRenderedComponents,
+  RenderedComponents,
+} from './normalize';
 import { validate } from './validate';
 
 export type MessageReplyOptions = {
@@ -11,7 +13,7 @@ export type MessageReplyOptions = {
 };
 
 export type MessageReplyPayload = MessageReplyOptions & {
-  components: readonly DisplayInput[];
+  components: RenderedComponents;
 };
 
 type ReplyableInteraction = {
@@ -19,42 +21,24 @@ type ReplyableInteraction = {
 };
 
 export const message = {
-  reply,
+  reply(interaction: ReplyableInteraction, payload: MessageReplyPayload) {
+    if (!isRenderedComponents(payload.components)) {
+      throw new Error('Components must be created with ui.render(...).');
+    }
+
+    validate.components(payload.components);
+
+    const flags = payload.ephemeral
+      ? [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]
+      : [MessageFlags.IsComponentsV2];
+
+    const autoFiles = getRenderedComponentsAttachments(payload.components);
+    const files = [...autoFiles, ...(payload.files ?? [])];
+
+    return interaction.reply({
+      flags,
+      components: payload.components,
+      ...(files.length ? { files } : {}),
+    });
+  },
 };
-
-async function reply(
-  interaction: ReplyableInteraction,
-  payload: MessageReplyPayload,
-): Promise<unknown> {
-  return sendReply(interaction, payload);
-}
-
-function sendReply(
-  interaction: ReplyableInteraction,
-  payloadInput: MessageReplyPayload,
-): Promise<unknown> {
-  const components = toDisplayComponents(...payloadInput.components);
-  validate.components(components);
-
-  const flags = payloadInput.ephemeral
-    ? [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]
-    : [MessageFlags.IsComponentsV2];
-
-  const payload: {
-    flags: MessageFlags[];
-    components: unknown[];
-    files?: readonly unknown[];
-  } = {
-    flags,
-    components: components as unknown[],
-  };
-
-  const autoFiles = collectAttachmentsFromDisplayInputs(payloadInput.components);
-  const files = [...autoFiles, ...(payloadInput.files ?? [])];
-
-  if (files.length > 0) {
-    payload.files = files;
-  }
-
-  return interaction.reply(payload);
-}

@@ -33,24 +33,37 @@ type Map = {
 };
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
-type Params<Path extends string> =
-  Path extends `${infer _Start}:${infer Param}/${infer Rest}`
-    ? { [K in Param | keyof Params<Rest>]: string }
-    : Path extends `${infer _Start}:${infer Param}`
-      ? { [K in Param]: string }
-      : {};
+type SegmentParamName<Segment extends string> = Segment extends `:${infer Param}`
+  ? Param
+  : never;
+
+type PathParamNames<Path extends string> = Path extends `${infer Segment}/${infer Rest}`
+  ? SegmentParamName<Segment> | PathParamNames<Rest>
+  : SegmentParamName<Path>;
+
+export type ResponderParams<Path extends string> = [PathParamNames<Path>] extends [never]
+  ? Record<never, never>
+  : { [K in PathParamNames<Path>]: string };
+
+export type ResponderParser<Path extends string, Output = unknown> =
+  | ZodTypeAny
+  | ((params: ResponderParams<Path>) => Output);
 
 export type ResponderParse<P, Path extends string> = P extends ZodTypeAny
   ? zInfer<P>
-  : P extends (params: Params<Path>) => infer R
+  : P extends (params: ResponderParams<Path>) => infer R
     ? R
-    : Params<Path>;
+    : ResponderParams<Path>;
 
-export type Responder<Path extends string, Type extends ResponderType, P = undefined> = {
+export type Responder<
+  Path extends string,
+  Type extends ResponderType,
+  Parse extends ResponderParser<Path> | undefined = undefined,
+> = {
   customId: Path;
   type: Type;
-  parse?: ZodTypeAny | ((params: Params<Path>) => any);
-  run: RunResponder<Type, Path, P>;
+  parse?: Parse;
+  run: RunResponder<Type, Path, Parse>;
   cache?: 'once' | 'temporary';
   expire?: number;
 };

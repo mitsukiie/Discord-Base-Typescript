@@ -18,24 +18,35 @@ import {
 } from 'discord.js';
 
 import {
+  Button,
+  ContainerNode,
   ContainerChild,
   ContainerInput,
   DisplayComponent,
-  EasyButton,
-  EasyContainerChild,
-  EasyFile,
-  EasyMediaItem,
-  EasyRowComponent,
-  EasySelectMenu,
-  DisplayInput
+  FileComponent,
+  MediaItem,
+  RowComponent,
+  SelectMenu,
+  DisplayInput,
 } from '@types';
 
 import { validate } from './validate';
 
-const ATTACHMENTS_META = Symbol('ui.display.attachments');
+const ATTACHMENTS = Symbol('ui.display.attachments');
+const RENDERED = Symbol('ui.display.rendered');
+const RENDERED_ATTACHMENTS = Symbol('ui.display.rendered.attachments');
 
 type ContainerWithAttachments = ContainerBuilder & {
-  [ATTACHMENTS_META]?: readonly unknown[];
+  [ATTACHMENTS]?: readonly unknown[];
+};
+
+type RenderedComponentsMeta = DisplayComponent[] & {
+  [RENDERED]?: true;
+  [RENDERED_ATTACHMENTS]?: readonly unknown[];
+};
+
+export type RenderedComponents = readonly DisplayComponent[] & {
+  readonly [RENDERED]: true;
 };
 
 function isContainerChild(component: unknown): component is ContainerChild {
@@ -53,13 +64,39 @@ function isDisplayComponent(component: unknown): component is DisplayComponent {
   return component instanceof ContainerBuilder || isContainerChild(component);
 }
 
-function buildButton(button: EasyButton) {
+function buildButton(button: Button) {
   validate.button(button);
 
-  return new ButtonBuilder()
+  const built = new ButtonBuilder()
     .setLabel(button.label)
-    .setCustomId(button.id)
+    .setCustomId(button.customId)
     .setStyle(button.style ?? ButtonStyle.Primary);
+
+  if (button.emoji) {
+    built.setEmoji({ name: button.emoji });
+  }
+
+  return built;
+}
+
+function applyButtonData<
+  T extends {
+    setLabel(label: string): T;
+    setCustomId(id: string): T;
+    setStyle(style: ButtonStyle): T;
+    setEmoji(emoji: { name: string }): T;
+  },
+>(button: T, data: Button): T {
+  button
+    .setLabel(data.label)
+    .setCustomId(data.customId)
+    .setStyle(data.style ?? ButtonStyle.Primary);
+
+  if (data.emoji) {
+    button.setEmoji({ name: data.emoji });
+  }
+
+  return button;
 }
 
 function applySelectBase<
@@ -70,7 +107,7 @@ function applySelectBase<
     setMaxValues(maxValues: number): T;
     setDisabled(disabled?: boolean): T;
   },
->(builder: T, select: EasySelectMenu) {
+>(builder: T, select: SelectMenu) {
   builder.setCustomId(select.id);
 
   if (select.placeholder) builder.setPlaceholder(select.placeholder);
@@ -81,7 +118,7 @@ function applySelectBase<
   return builder;
 }
 
-function buildSelect(select: EasySelectMenu) {
+function buildSelect(select: SelectMenu) {
   validate.select(select);
 
   switch (select.type) {
@@ -117,15 +154,11 @@ function buildSelect(select: EasySelectMenu) {
   }
 }
 
-function buildRowComponent(component: EasyRowComponent) {
-  if ('label' in component) {
-    return buildButton(component);
-  }
-
-  return buildSelect(component);
+function buildRowComponent(component: RowComponent) {
+  return 'label' in component ? buildButton(component) : buildSelect(component);
 }
 
-function buildGallery(items: readonly EasyMediaItem[]) {
+function buildGallery(items: readonly MediaItem[]) {
   validate.gallery(items);
 
   const gallery = new MediaGalleryBuilder();
@@ -145,7 +178,7 @@ function buildGallery(items: readonly EasyMediaItem[]) {
   return gallery;
 }
 
-function buildFile(fileInput: EasyFile) {
+function buildFile(fileInput: FileComponent) {
   validate.attachmentUrl(fileInput.url);
 
   const file = new FileBuilder().setURL(fileInput.url);
@@ -154,12 +187,7 @@ function buildFile(fileInput: EasyFile) {
   return file;
 }
 
-function buildEasyChild(component: EasyContainerChild): ContainerChild {
-  if (typeof component === 'string') {
-    validate.text(component);
-    return new TextDisplayBuilder().setContent(component);
-  }
-
+function buildEasyChild(component: ContainerNode): ContainerChild {
   switch (component.type) {
     case 'text': {
       validate.text(component.content);
@@ -183,13 +211,8 @@ function buildEasyChild(component: EasyContainerChild): ContainerChild {
       );
 
       if (component.button) {
-        const buttonData = component.button;
-
         section.setButtonAccessory((button) =>
-          button
-            .setLabel(buttonData.label)
-            .setCustomId(buttonData.id)
-            .setStyle(buttonData.style ?? ButtonStyle.Primary),
+          applyButtonData(button, component.button!),
         );
       }
 
@@ -246,7 +269,32 @@ export function toDisplayComponents(...components: DisplayInput[]) {
   return components.map(toDisplayComponent);
 }
 
-function isEasyFileInput(component: unknown): component is EasyFile {
+export function createRenderedComponents(
+  components: DisplayComponent[],
+  attachments: readonly unknown[],
+): RenderedComponents {
+  const rendered = components as RenderedComponentsMeta;
+
+  rendered[RENDERED] = true;
+
+  if (attachments.length > 0) {
+    rendered[RENDERED_ATTACHMENTS] = attachments;
+  }
+
+  return rendered as RenderedComponents;
+}
+
+export function isRenderedComponents(value: unknown): value is RenderedComponents {
+  return Array.isArray(value) && (value as RenderedComponentsMeta)[RENDERED] === true;
+}
+
+export function getRenderedComponentsAttachments(
+  components: RenderedComponents,
+): readonly unknown[] {
+  return (components as RenderedComponentsMeta)[RENDERED_ATTACHMENTS] ?? [];
+}
+
+function isEasyFileInput(component: unknown): component is FileComponent {
   if (!component || typeof component !== 'object' || Array.isArray(component)) {
     return false;
   }
@@ -256,14 +304,14 @@ function isEasyFileInput(component: unknown): component is EasyFile {
 }
 
 function getContainerAttachments(container: ContainerBuilder): readonly unknown[] {
-  return (container as ContainerWithAttachments)[ATTACHMENTS_META] ?? [];
+  return (container as ContainerWithAttachments)[ATTACHMENTS] ?? [];
 }
 
 export function collectAttachmentsFromContainerInputs(
   components: readonly ContainerInput[],
 ): readonly unknown[] {
   return components
-    .filter((component): component is EasyFile => isEasyFileInput(component))
+    .filter((component): component is FileComponent => isEasyFileInput(component))
     .map((fileInput) => fileInput.attachment)
     .filter((attachment): attachment is unknown => attachment !== undefined);
 }
@@ -274,7 +322,7 @@ export function attachContainerAttachments(
 ): ContainerBuilder {
   if (attachments.length === 0) return container;
 
-  (container as ContainerWithAttachments)[ATTACHMENTS_META] = attachments;
+  (container as ContainerWithAttachments)[ATTACHMENTS] = attachments;
   return container;
 }
 

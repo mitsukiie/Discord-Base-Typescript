@@ -9,20 +9,23 @@ export default createCommand({
   type: CommandType.ChatInput,
 
   async run(interaction) {
-
-    const components = [
-      '## Section Example',
+    const components = ui.render(
+      ui.text('## Section Example'),
       ui.section(['Texto principal da section', 'Texto secundario da section'], {
-        button: ui.button('Confirmar', 'section:confirm', ButtonStyle.Success),
+        button: ui.button({
+          label: 'Confirmar',
+          customId: 'section:confirm',
+          style: ButtonStyle.Success,
+        }),
         /*
         // Ou thumbnail, mas nao pode ser os dois ao mesmo tempo por causa da regra de layout de largura maxima.
         thumbnail: ui.thumbnail(
           'https://picsum.photos/id/1025/400/400',
           'Thumbnail da section',
         ),
-        */  
+        */
       }),
-    ]
+    );
     await message.reply(interaction, {
       ephemeral: true,
       components,

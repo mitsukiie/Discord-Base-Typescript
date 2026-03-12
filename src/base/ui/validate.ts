@@ -1,18 +1,23 @@
 import {
+  Button,
   DisplayComponent,
-  EasyButton,
-  EasyMediaItem,
-  EasyRowComponent,
-  EasySection,
-  EasySelectMenu,
+  MediaItem,
+  RowComponent,
+  SectionComponent,
+  SelectMenu,
 } from '@types';
 
 const HTTP_URL_PATTERN = /^https?:\/\/.+/i;
 const ATTACHMENT_URL_PATTERN = /^attachment:\/\/.+/i;
 const HEX_COLOR_PATTERN = /^(?:#|0x)?([0-9a-fA-F]{6})$/;
 
+function hasLengthBetween(value: string | undefined, min: number, max: number) {
+  if (!value) return false;
+  return value.length >= min && value.length <= max;
+}
+
 export const validate = {
-  components(components: DisplayComponent[]) {
+  components(components: readonly DisplayComponent[]) {
     if (components.length > 40) {
       throw new Error('A message cannot contain more than 40 components.');
     }
@@ -36,17 +41,17 @@ export const validate = {
     }
   },
 
-  button(button: EasyButton) {
-    if (!button.label || button.label.length > 80) {
+  button(button: Button) {
+    if (!hasLengthBetween(button.label, 1, 80)) {
       throw new Error('Button label must have between 1 and 80 characters.');
     }
 
-    if (!button.id || button.id.length > 100) {
+    if (!hasLengthBetween(button.customId, 1, 100)) {
       throw new Error('Button custom id must have between 1 and 100 characters.');
     }
   },
 
-  row(components: readonly EasyRowComponent[]) {
+  row(components: readonly RowComponent[]) {
     if (components.length < 1 || components.length > 5) {
       throw new Error('Action row must contain between 1 and 5 components.');
     }
@@ -60,8 +65,8 @@ export const validate = {
     }
   },
 
-  select(select: EasySelectMenu) {
-    if (!select.id || select.id.length > 100) {
+  select(select: SelectMenu) {
+    if (!hasLengthBetween(select.id, 1, 100)) {
       throw new Error('Select custom id must have between 1 and 100 characters.');
     }
 
@@ -76,7 +81,7 @@ export const validate = {
     }
   },
 
-  section(section: EasySection) {
+  section(section: SectionComponent) {
     if (section.texts.length < 1 || section.texts.length > 3) {
       throw new Error('Section must contain between 1 and 3 text blocks.');
     }
@@ -110,7 +115,7 @@ export const validate = {
     return Number.parseInt(hex, 16);
   },
 
-  gallery(items: readonly EasyMediaItem[]) {
+  gallery(items: readonly MediaItem[]) {
     if (items.length < 1 || items.length > 10) {
       throw new Error('Gallery must contain between 1 and 10 items.');
     }

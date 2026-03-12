@@ -26,13 +26,14 @@ export type DisplayComponent =
 
 export type ContainerChild = Exclude<DisplayComponent, ContainerBuilder>;
 
-export type EasyButton = {
+export type Button = {
   label: string;
-  id: ButtonID;
+  customId: ButtonID;
+  emoji?: string;
   style?: ButtonStyle;
 };
 
-export type EasySelectBase = {
+export type SelectBase = {
   id: ButtonID;
   placeholder?: string;
   minValues?: number;
@@ -40,67 +41,67 @@ export type EasySelectBase = {
   disabled?: boolean;
 };
 
-export type EasyStringSelectOption = {
+export type StringSelectOption = {
   label: string;
   value: string;
   description?: string;
   default?: boolean;
 };
 
-export type EasyStringSelect = EasySelectBase & {
+export type StringSelect = SelectBase & {
   type: 'select.string';
-  options: readonly EasyStringSelectOption[];
+  options: readonly StringSelectOption[];
 };
 
-export type EasyUserSelect = EasySelectBase & {
+export type UserSelect = SelectBase & {
   type: 'select.user';
 };
 
-export type EasyRoleSelect = EasySelectBase & {
+export type RoleSelect = SelectBase & {
   type: 'select.role';
 };
 
-export type EasyMentionableSelect = EasySelectBase & {
+export type MentionableSelect = SelectBase & {
   type: 'select.mentionable';
 };
 
-export type EasyChannelSelect = EasySelectBase & {
+export type ChannelSelect = SelectBase & {
   type: 'select.channel';
   channelTypes?: readonly ChannelType[];
 };
 
-export type EasySelectMenu =
-  | EasyStringSelect
-  | EasyUserSelect
-  | EasyRoleSelect
-  | EasyMentionableSelect
-  | EasyChannelSelect;
+export type SelectMenu =
+  | StringSelect
+  | UserSelect
+  | RoleSelect
+  | MentionableSelect
+  | ChannelSelect;
 
-export type EasyRowComponent = EasyButton | EasySelectMenu;
+export type RowComponent = Button | SelectMenu;
 
-export type EasyText = string | { type: 'text'; content: string };
+export type TextComponent = { type: 'text'; content: string };
 
-export type EasySeparator = { type: 'separator' };
+export type SeparatorComponent = { type: 'separator' };
 
-export type EasyFile = {
+export type FileComponent = {
   type: 'file';
   url: AttachmentUrlString;
   spoiler?: boolean;
   attachment?: unknown;
 };
 
-export type EasyMediaItem = {
+export type MediaItem = {
   url: UrlString;
   description?: string;
   spoiler?: boolean;
 };
 
-export type EasyMediaGallery = {
+export type MediaGallery = {
   type: 'gallery';
-  items: readonly EasyMediaItem[];
+  items: readonly MediaItem[];
 };
 
-export type EasyThumbnail = {
+export type Thumbnail = {
   url: UrlString;
   description?: string;
   spoiler?: boolean;
@@ -109,36 +110,34 @@ export type EasyThumbnail = {
 export type SectionTexts = [string] | [string, string] | [string, string, string];
 
 export type SectionOptions = {
-  button?: EasyButton;
-  thumbnail?: EasyThumbnail;
+  button?: Button;
+  thumbnail?: Thumbnail;
 };
 
-export type EasySection = {
+export type SectionComponent = {
   type: 'section';
   texts: SectionTexts;
-  button?: EasyButton;
-  thumbnail?: EasyThumbnail;
+  button?: Button;
+  thumbnail?: Thumbnail;
 };
 
-export type EasyRow = {
+export type Row = {
   type: 'row';
-  components: readonly EasyRowComponent[];
+  components: readonly RowComponent[];
 };
 
-export type EasyContainerChild =
-  | EasyText
-  | EasySeparator
-  | EasySection
-  | EasyRow
-  | EasyMediaGallery
-  | EasyFile;
+export type ContainerNode =
+  | TextComponent
+  | SeparatorComponent
+  | SectionComponent
+  | Row
+  | MediaGallery
+  | FileComponent;
 
-export type ContainerInput = ContainerChild | EasyContainerChild;
+export type ContainerInput = ContainerChild | ContainerNode;
 
 export type ContainerOptions = {
   color?: number | string;
-  text?: string;
-  description?: string;
 };
 
-export type DisplayInput = DisplayComponent | EasyContainerChild;
+export type DisplayInput = DisplayComponent | ContainerNode;

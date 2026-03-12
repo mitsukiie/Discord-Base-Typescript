@@ -1,7 +1,7 @@
 {
   "name": "discord-base-typescript",
   "main": "src/bot.ts",
-  "version": "1.0.1",
+  "version": "1.2.1",
   "type": "module",
   "private": true,
   "scripts": {

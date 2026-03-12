@@ -1,34 +1,48 @@
-import { Responder, ResponderType } from '@types';
+import { Responder, ResponderType, ResponderParser, ResponderParams } from '@types';
 
-interface Route<Path extends string, T extends ResponderType, P> extends Responder<
-  Path,
-  T,
-  P
-> {
+export interface Route<
+  Path extends string,
+  T extends ResponderType,
+  Parse extends ResponderParser<Path> | undefined,
+> extends Responder<Path, T, Parse> {
   parts: string[];
 }
 
-export class route {
-  private routes = new Map<ResponderType, Route<any, any, any>[]>();
+type Router<T extends ResponderType = ResponderType> = Route<
+  string,
+  T,
+  ResponderParser<string> | undefined
+>;
 
-  create<Path extends string, T extends ResponderType, P>(opts: Responder<Path, T, P>) {
+function normalize(param: string) {
+  return param.replace(/[?+*]$/, '');
+}
+
+export class route {
+  private routes = new Map<ResponderType, Router[]>();
+
+  create<
+    Path extends string,
+    T extends ResponderType,
+    Parse extends ResponderParser<Path> | undefined = undefined,
+  >(opts: Responder<Path, T, Parse>) {
     if (opts.cache === 'temporary' && !opts.expire) {
       throw new Error('Temporary responders must define expire time.');
     }
 
-    const route: Route<Path, T, P> = {
+    const created: Route<Path, T, Parse> = {
       ...opts,
       parts: opts.customId.split('/'),
     };
 
-    const list = this.routes.get(opts.type) || [];
-    list.push(route);
+    const list = this.routes.get(opts.type) ?? [];
+    list.push(created as unknown as Router);
     this.routes.set(opts.type, list);
 
-    return route;
+    return created;
   }
 
-  find(id: string, type: ResponderType) {
+  find<T extends ResponderType>(id: string, type: T): Router<T> | null {
     const routes = this.routes.get(type);
     if (!routes) return null;
 
@@ -41,23 +55,28 @@ export class route {
         return part.startsWith(':') || part === parts[i];
       });
 
-      if (match) return route;
+      if (match) return route as unknown as Router<T>;
     }
 
     return null;
   }
 
-  extract(id: string, route: Route<any, any, any>) {
+  extract<
+    Path extends string,
+    T extends ResponderType,
+    Parse extends ResponderParser<Path> | undefined,
+  >(id: string, route: Route<Path, T, Parse>): ResponderParams<Path> {
     const params: Record<string, string> = {};
     const values = id.split('/');
 
     values.forEach((value, i) => {
       const part = route.parts[i];
       if (part?.startsWith(':')) {
-        const key = part.slice(1);
+        const key = normalize(part.slice(1));
         params[key] = value;
       }
     });
-    return params;
+
+    return params as ResponderParams<Path>;
   }
 }

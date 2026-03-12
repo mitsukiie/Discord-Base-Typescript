@@ -20,7 +20,7 @@ export type RunCommand<T extends CommandType> = (
 ) => any;
 
 // Run responder
-export type RunResponder<T extends ResponderType, Path extends string, P> = (
+export type RunResponder<T extends ResponderType, Path extends string, P = undefined> = (
   interaction: ResponderInteraction<T>,
   params: ResponderParse<P, Path>,
 ) => unknown | Promise<unknown>;

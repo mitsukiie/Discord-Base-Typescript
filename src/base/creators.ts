@@ -15,7 +15,14 @@ import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
 import { ExtendedClient, App } from '@base';
-import { Command, Event, Responder, ResponderType, CommandType } from '@types';
+import {
+  Command,
+  Event,
+  Responder,
+  ResponderType,
+  CommandType,
+  ResponderParser,
+} from '@types';
 import { logger } from '@utils';
 
 function Creators() {
@@ -91,9 +98,9 @@ function Creators() {
 
     createResponder: function <
       const Path extends string,
-      Type extends ResponderType,
-      Parsed,
-    >(opts: Responder<Path, Type, Parsed>) {
+      const Type extends ResponderType,
+      Parse extends ResponderParser<Path> | undefined = undefined,
+    >(opts: Responder<Path, Type, Parse>) {
       const app = App.getInstance();
       app.responders.register(opts);
       return opts;

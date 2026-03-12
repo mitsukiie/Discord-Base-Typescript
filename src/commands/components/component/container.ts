@@ -8,19 +8,24 @@ export default createCommand({
   type: CommandType.ChatInput,
 
   async run(interaction) {
-    const components = ui.container(
-      {
-        color: '#0099ff',
-        text: '## Container Example',
-        description: 'Mesma API, mas agrupando tudo em um ContainerBuilder.',
-      },
-      ui.divider(),
-      ui.row(ui.button('Voltar', 'container:back')),
+    const components = ui.render(
+      ui.container(
+        { color: '#0099ff' },
+        ui.text('## Container Example'),
+        ui.text('Mesma API, mas agrupando tudo em um ContainerBuilder.'),
+        ui.divider(),
+        ui.row(
+          ui.button({
+            label: 'Voltar',
+            customId: 'container:back',
+          }),
+        ),
+      ),
     );
 
     await message.reply(interaction, {
       ephemeral: true,
-      components: [components],
+      components,
     });
   },
 });
