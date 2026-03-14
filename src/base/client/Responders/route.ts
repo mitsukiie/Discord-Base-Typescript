@@ -1,20 +1,20 @@
 import {
   Responder,
   ResponderType,
-  ResponderTypeInput,
+  ResponderTypes,
   ResponderParser,
   ResponderParams,
 } from '@types';
 
 export interface Route<
   Path extends string,
-  T extends ResponderTypeInput,
+  T extends ResponderTypes,
   Parse extends ResponderParser<Path> | undefined,
 > extends Responder<Path, T, Parse> {
   parts: string[];
 }
 
-type Router = Route<string, ResponderTypeInput, ResponderParser<string> | undefined>;
+type Router = Route<string, ResponderTypes, ResponderParser<string> | undefined>;
 
 function normalize(param: string) {
   return param.replace(/[?+*]$/, '');
@@ -25,7 +25,7 @@ export class route {
 
   create<
     Path extends string,
-    T extends ResponderTypeInput,
+    T extends ResponderTypes,
     Parse extends ResponderParser<Path> | undefined = undefined,
   >(opts: Responder<Path, T, Parse>) {
     if (opts.cache === 'temporary' && !opts.expire) {
@@ -68,7 +68,7 @@ export class route {
 
   extract<
     Path extends string,
-    T extends ResponderTypeInput,
+    T extends ResponderTypes,
     Parse extends ResponderParser<Path> | undefined,
   >(id: string, route: Route<Path, T, Parse>): ResponderParams<Path> {
     const params: Record<string, string> = {};

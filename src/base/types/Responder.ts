@@ -33,9 +33,9 @@ type Map = {
 };
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
-export type ResponderTypeInput = ResponderType | readonly ResponderType[];
+export type ResponderTypes = ResponderType | readonly ResponderType[];
 
-type ResponderInteractionFromInput<T extends ResponderTypeInput> =
+type ResponderInteractionFromInput<T extends ResponderTypes> =
   T extends readonly ResponderType[]
     ? ResponderInteraction<T[number]>
     : T extends ResponderType
@@ -66,7 +66,7 @@ export type ResponderParse<P, Path extends string> = P extends ZodTypeAny
 
 export type Responder<
   Path extends string,
-  Type extends ResponderTypeInput,
+  Type extends ResponderTypes,
   Parse extends ResponderParser<Path> | undefined = undefined,
 > = {
   customId: Path;
