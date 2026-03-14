@@ -273,16 +273,16 @@ export const ui = {
     return { type: 'section' as const, texts, ...opts };
   },
 
-  thumbnail(url: UrlString, description?: string, spoiler?: boolean): Thumbnail {
-    return { url, description, spoiler };
+  thumbnail(options: Thumbnail): Thumbnail {
+    return options;
   },
 
   gallery(...items: MediaItem[]) {
     return { type: 'gallery' as const, items };
   },
 
-  image(url: UrlString, description?: string, spoiler?: boolean): MediaItem {
-    return { url, description, spoiler };
+  image(options: MediaItem): MediaItem {
+    return options;
   },
 
   file,

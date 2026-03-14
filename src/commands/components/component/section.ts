@@ -19,10 +19,10 @@ export default createCommand({
         }),
         /*
         // Ou thumbnail, mas nao pode ser os dois ao mesmo tempo por causa da regra de layout de largura maxima.
-        thumbnail: ui.thumbnail(
-          'https://picsum.photos/id/1025/400/400',
-          'Thumbnail da section',
-        ),
+        thumbnail: ui.thumbnail({
+          url: 'https://picsum.photos/id/1025/400/400',
+          description: 'Thumbnail da section',
+        }),
         */
       }),
     );

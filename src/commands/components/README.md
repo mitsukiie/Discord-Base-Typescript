@@ -63,7 +63,10 @@ ui.section(['Linha 1', 'Linha 2'], {
 });
 
 ui.section(['Linha 1'], {
-  thumbnail: ui.thumbnail('https://picsum.photos/id/1003/300/300', 'Miniatura'),
+  thumbnail: ui.thumbnail({
+    url: 'https://picsum.photos/id/1003/300/300',
+    description: 'Miniatura',
+  }),
 });
 ```
 
@@ -122,8 +125,8 @@ ui.row(
 
 ```ts
 ui.gallery(
-  ui.image('https://picsum.photos/id/1015/900/500', 'Imagem 1'),
-  ui.image('https://picsum.photos/id/1018/900/500', 'Imagem 2'),
+  ui.image({ url: 'https://picsum.photos/id/1015/900/500', description: 'Imagem 1' }),
+  ui.image({ url: 'https://picsum.photos/id/1018/900/500', description: 'Imagem 2' }),
 );
 
 const file = new AttachmentBuilder(Buffer.from('conteudo'), { name: 'exemplo.txt' });

@@ -20,8 +20,15 @@ export default createCommand({
       ui.container(
         ui.text('## Gallery Example'),
         ui.gallery(
-          ui.image('https://picsum.photos/id/1015/900/500', 'Imagem 1'),
-          ui.image('https://picsum.photos/id/1018/900/500', 'Imagem 2'),
+          ui.image({
+            url: 'https://picsum.photos/id/1015/900/500',
+            description: 'Imagem 1',
+            spoiler: true,
+          }),
+          ui.image({
+            url: 'https://picsum.photos/id/1018/900/500',
+            description: 'Imagem 2',
+          }),
         ),
         ui.file.fromAttachment(file),
       ),
