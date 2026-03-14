@@ -33,6 +33,15 @@ type Map = {
 };
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
+export type ResponderTypeInput = ResponderType | readonly ResponderType[];
+
+type ResponderInteractionFromInput<T extends ResponderTypeInput> =
+  T extends readonly ResponderType[]
+    ? ResponderInteraction<T[number]>
+    : T extends ResponderType
+      ? ResponderInteraction<T>
+      : never;
+
 type SegmentParamName<Segment extends string> = Segment extends `:${infer Param}`
   ? Param
   : never;
@@ -57,13 +66,13 @@ export type ResponderParse<P, Path extends string> = P extends ZodTypeAny
 
 export type Responder<
   Path extends string,
-  Type extends ResponderType,
+  Type extends ResponderTypeInput,
   Parse extends ResponderParser<Path> | undefined = undefined,
 > = {
   customId: Path;
   type: Type;
   parse?: Parse;
-  run: RunResponder<Type, Path, Parse>;
+  run: RunResponder<ResponderInteractionFromInput<Type>, Path, Parse>;
   cache?: 'once' | 'temporary';
   expire?: number;
 };

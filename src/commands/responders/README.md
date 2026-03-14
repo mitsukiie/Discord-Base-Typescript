@@ -87,6 +87,32 @@ Exemplo:
 type: ResponderType.Button
 ```
 
+Também é possível registrar o mesmo responder para mais de um tipo:
+
+```ts
+type: [ResponderType.Button, ResponderType.SelectString]
+```
+
+Nesse caso, o `interaction` vira uma união dos dois tipos e você deve fazer guarda de tipo no `run`:
+
+```ts
+createResponder({
+  customId: 'responder/:id',
+  type: [ResponderType.Button, ResponderType.SelectString],
+
+  async run(interaction, { id }) {
+    if (interaction.isButton()) {
+      await interaction.reply(`Botão clicado por ${id}`);
+      return;
+    }
+
+    if (interaction.isStringSelectMenu()) {
+      await interaction.reply(`Select usado por ${id}: ${interaction.values.join(', ')}`);
+    }
+  },
+});
+```
+
 ---
 
 ## 🔹 Estrutura da função `run`

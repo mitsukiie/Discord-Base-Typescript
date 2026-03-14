@@ -1,18 +1,20 @@
-import { Responder, ResponderType, ResponderParser, ResponderParams } from '@types';
+import {
+  Responder,
+  ResponderType,
+  ResponderTypeInput,
+  ResponderParser,
+  ResponderParams,
+} from '@types';
 
 export interface Route<
   Path extends string,
-  T extends ResponderType,
+  T extends ResponderTypeInput,
   Parse extends ResponderParser<Path> | undefined,
 > extends Responder<Path, T, Parse> {
   parts: string[];
 }
 
-type Router<T extends ResponderType = ResponderType> = Route<
-  string,
-  T,
-  ResponderParser<string> | undefined
->;
+type Router = Route<string, ResponderTypeInput, ResponderParser<string> | undefined>;
 
 function normalize(param: string) {
   return param.replace(/[?+*]$/, '');
@@ -23,7 +25,7 @@ export class route {
 
   create<
     Path extends string,
-    T extends ResponderType,
+    T extends ResponderTypeInput,
     Parse extends ResponderParser<Path> | undefined = undefined,
   >(opts: Responder<Path, T, Parse>) {
     if (opts.cache === 'temporary' && !opts.expire) {
@@ -35,14 +37,17 @@ export class route {
       parts: opts.customId.split('/'),
     };
 
-    const list = this.routes.get(opts.type) ?? [];
-    list.push(created as unknown as Router);
-    this.routes.set(opts.type, list);
+    const types = (Array.isArray(opts.type) ? opts.type : [opts.type]) as readonly ResponderType[];
+    for (const type of types) {
+      const list = this.routes.get(type) ?? [];
+      list.push(created as unknown as Router);
+      this.routes.set(type, list);
+    }
 
     return created;
   }
 
-  find<T extends ResponderType>(id: string, type: T): Router<T> | null {
+  find(id: string, type: ResponderType): Router | null {
     const routes = this.routes.get(type);
     if (!routes) return null;
 
@@ -55,7 +60,7 @@ export class route {
         return part.startsWith(':') || part === parts[i];
       });
 
-      if (match) return route as unknown as Router<T>;
+      if (match) return route;
     }
 
     return null;
@@ -63,7 +68,7 @@ export class route {
 
   extract<
     Path extends string,
-    T extends ResponderType,
+    T extends ResponderTypeInput,
     Parse extends ResponderParser<Path> | undefined,
   >(id: string, route: Route<Path, T, Parse>): ResponderParams<Path> {
     const params: Record<string, string> = {};

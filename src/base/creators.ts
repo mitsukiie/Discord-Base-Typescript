@@ -20,6 +20,7 @@ import {
   Event,
   Responder,
   ResponderType,
+  ResponderTypeInput,
   CommandType,
   ResponderParser,
 } from '@types';
@@ -98,7 +99,7 @@ function Creators() {
 
     createResponder: function <
       const Path extends string,
-      const Type extends ResponderType,
+      const Type extends ResponderTypeInput,
       Parse extends ResponderParser<Path> | undefined = undefined,
     >(opts: Responder<Path, Type, Parse>) {
       const app = App.getInstance();

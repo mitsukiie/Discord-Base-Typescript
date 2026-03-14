@@ -1,12 +1,6 @@
 import { AutocompleteInteraction, ClientEvents } from 'discord.js';
 import { ExtendedClient } from '@base';
-import {
-  CommandInteraction,
-  CommandType,
-  ResponderInteraction,
-  ResponderType,
-  ResponderParse,
-} from '@types';
+import { CommandInteraction, CommandType, ResponderParse } from '@types';
 
 // Run event
 export type RunEvent<K extends keyof ClientEvents = keyof ClientEvents> = (
@@ -20,8 +14,8 @@ export type RunCommand<T extends CommandType> = (
 ) => any;
 
 // Run responder
-export type RunResponder<T extends ResponderType, Path extends string, P = undefined> = (
-  interaction: ResponderInteraction<T>,
+export type RunResponder<I, Path extends string, P = undefined> = (
+  interaction: I,
   params: ResponderParse<P, Path>,
 ) => unknown | Promise<unknown>;
 
