@@ -1,8 +1,33 @@
 import { Interaction } from 'discord.js';
 import { ZodType } from 'zod';
 import { getType } from '@utils';
+import { CacheType } from '@types';
 import { session } from './session';
 import { route } from './route';
+
+function CheckInteractionType(
+  interaction: Interaction,
+  cacheType?: CacheType,
+) {
+  if (!cacheType) return true;
+
+  if (cacheType === 'cached') return interaction.inCachedGuild();
+  if (cacheType === 'guild') return interaction.inGuild();
+
+  return true;
+}
+
+function CacheErrorMessage(cacheType: CacheType) {
+  if (cacheType === 'cached') {
+    return 'Esta interação exige servidor em cache para continuar.';
+  }
+
+  if (cacheType === 'guild') {
+    return 'Esta interação só pode ser usada dentro de servidor.';
+  }
+
+  return 'Esta interação exige contexto raw de servidor.';
+}
 
 export class ResponderManager {
   private routes = new route();
@@ -32,6 +57,19 @@ export class ResponderManager {
     const route = this.routes.find(id, type);
     if (!route) return;
 
+    const cache = route.cache;
+    if (cache && !CheckInteractionType(interaction, cache)) {
+      if ('reply' in interaction && interaction.isRepliable() && !interaction.replied) {
+        await interaction
+          .reply({
+            content: CacheErrorMessage(cache),
+            flags: ['Ephemeral'],
+          })
+          .catch(() => {});
+      }
+      return;
+    }
+
     try {
       const params = this.routes.extract(id, route);
 
@@ -45,12 +83,12 @@ export class ResponderManager {
         }
       }
 
-      if (route.cache === 'temporary' && !this.sessions.has(id)) {
-        this.sessions.add(id, route.cache, route.expire);
+      if (route.lifetime === 'temporary' && !this.sessions.has(id)) {
+        this.sessions.add(id, route.lifetime, route.expire);
       }
 
-      if (route.cache === 'once') {
-        this.sessions.add(id, route.cache);
+      if (route.lifetime === 'once') {
+        this.sessions.add(id, route.lifetime);
       }
 
       await route.run(interaction as any, data);

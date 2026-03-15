@@ -28,7 +28,7 @@ export class route {
     T extends ResponderTypes,
     Parse extends ResponderParser<Path> | undefined = undefined,
   >(opts: Responder<Path, T, Parse>) {
-    if (opts.cache === 'temporary' && !opts.expire) {
+    if (opts.lifetime === 'temporary' && !opts.expire) {
       throw new Error('Temporary responders must define expire time.');
     }
 

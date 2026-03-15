@@ -6,6 +6,18 @@ Eles funcionam de forma semelhante a **rotas**, permitindo extrair valores diret
 
 ---
 
+## Campos do createResponder
+
+- customId: rota com parametros, exemplo responder/:id
+- type: um tipo ou lista de tipos do ResponderType
+- parse: opcional, Zod ou funcao para transformar/validar params
+- run: funcao executada quando a interacao casa com a rota
+- lifetime: opcional, controle de reutilizacao da rota (once ou temporary)
+- expire: tempo em ms quando lifetime for temporary
+- cache: opcional, exige contexto da interaction no Discord (cached ou guild)
+
+---
+
 # 🚀 Exemplos
 
 - `src/commands/responders/button.ts` → responder para `botão`
@@ -51,19 +63,52 @@ Se nenhum `parse` for definido, os parâmetros serão **strings**.
 
 ---
 
-## 🔹 Cache
-Os responders podem ter controle de uso usando `cache`.
+## 🔹 Cache da interaction (Discord)
+
+O campo ``cache`` define o contexto necessário da interação antes do responder executar.
+> Isso não tem relação com ``lifetime``.
+
+### Cached
+
+Exige que o **servidor esteja no cache do client**.
+
+```ts
+cache: "cached" // interaction.inCachedGuild()
+```
+
+Use quando precisar de:
+
+- ``interaction.guild``
+- ``interaction.member``
+- permissões ou cargos
+
+### Guild
+
+Exige apenas que a interação **venha de um servidor**.
+
+```ts
+cache: "guild" // interaction.inGuild()
+```
+
+Ou seja:
+- funciona em servidores
+- não funciona em DM
+
+---
+
+## 🔹 Lifetime
+Os responders podem ter controle de uso usando `lifetime`.
 
 ### once
 Permite usar o responder **apenas uma vez**.
 ```ts
-cache: "once"
+lifetime: "once"
 ```
 
 ### temporary
 Permite usar o responder por um **tempo limitado**.
 ```ts
-cache: "temporary",
+lifetime: "temporary",
 expire: 60000 // 1 minuto
 ```
 

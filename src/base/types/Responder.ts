@@ -34,6 +34,7 @@ type Map = {
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
 export type ResponderTypes = ResponderType | readonly ResponderType[];
+export type CacheType = 'cached' | 'guild'
 
 type ResponderInteractionFromInput<T extends ResponderTypes> =
   T extends readonly ResponderType[]
@@ -73,6 +74,7 @@ export type Responder<
   type: Type;
   parse?: Parse;
   run: RunResponder<ResponderInteractionFromInput<Type>, Path, Parse>;
-  cache?: 'once' | 'temporary';
+  lifetime?: 'once' | 'temporary';
   expire?: number;
+  cache?: CacheType;  
 };
