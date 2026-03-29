@@ -23,8 +23,8 @@ Todo envio segue dois passos:
 // 1. Montar os componentes com ui.render(...)
 const components = ui.render(ui.text('## Titulo'), ui.divider());
 
-// 2. Enviar com message.reply
-await message.reply(interaction, { components, ephemeral: true });
+// 2. Enviar com ui.send
+await ui.send(interaction, { components, ephemeral: true });
 ```
 
 > `components` **deve** vir de `ui.render(...)`. Passar um array criado manualmente causa erro.
@@ -167,7 +167,7 @@ ui.container(
 
 | Componente                     | Limite                  |
 | ------------------------------ | ----------------------- |
-| `message.reply` components     | máximo 40               |
+| `ui.send` components           | máximo 40               |
 | `section` textos               | 1 a 3                   |
 | `row` componentes              | 1 a 5                   |
 | `select` na row                | deve ficar sozinho      |

@@ -1,6 +1,6 @@
 import { createCommand } from '@base';
 import { CommandType } from '@types';
-import { message, ui } from '@ui';
+import { ui } from '@ui';
 import { ButtonStyle } from 'discord.js';
 
 export default createCommand({
@@ -26,7 +26,7 @@ export default createCommand({
         */
       }),
     );
-    await message.reply(interaction, {
+    await ui.send(interaction, {
       ephemeral: true,
       components,
     });

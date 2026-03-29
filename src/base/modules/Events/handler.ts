@@ -7,9 +7,11 @@ import { ExtendedClient, App } from '@base';
 import { Event } from '@types';
 import { logger } from '@utils';
 
-export async function Events(client: ExtendedClient) {
-  const app = App.getInstance();
+export async function loadEvents(client?: ExtendedClient): Promise<Event[]> {
+  const app = App.get();
   const files = await glob(`./src/events/**/*.ts`);
+
+  app.events.clear();
 
   if (settings.terminal.showEventsFiles) {
     logger.info('🔄 Iniciando o carregamento de eventos...');
@@ -33,6 +35,14 @@ export async function Events(client: ExtendedClient) {
 
   const events = app.events.all();
 
+  if (client) {
+    await registerEvents(client, events);
+  }
+
+  return events;
+}
+
+export async function registerEvents(client: ExtendedClient, events: Event[]) {
   events.forEach((event) => {
     if (event.once) {
       client.once(event.name, (...args) => event.run(...args, client));
@@ -44,4 +54,9 @@ export async function Events(client: ExtendedClient) {
       logger.success(`⚡ Evento registrado: ${event.name}`);
     }
   });
+}
+
+export async function Events(client: ExtendedClient) {
+  const events = await loadEvents();
+  await registerEvents(client, events);
 }

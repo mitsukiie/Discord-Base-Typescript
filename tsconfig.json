@@ -21,9 +21,10 @@
 
     "paths": {
       "@base": ["./src/base"],
-      "@ui": ["./src/base/ui"],
       "@types": ["./src/base/types"],
+      "@modules": ["./src/base/modules"],
       "@utils": ["./src/base/utils"],
+      "@ui": ["./src/base/ui"],
     }
   },
   "include": ["src"]

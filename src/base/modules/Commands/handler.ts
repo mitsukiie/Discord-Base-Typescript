@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import { readdirSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
@@ -9,12 +9,23 @@ import { createSubcommand } from '../../creators';
 import { Command } from '@types';
 import { logger } from '@utils';
 
-export async function Commands(client: ExtendedClient) {
-  const app = App.getInstance();
-  const commands: any[] = [];
+type Serialized = ReturnType<typeof serialize>;
+
+export async function loadCommands(client?: ExtendedClient): Promise<Serialized[]> {
+  const app = App.get();
+  const commands: Serialized[] = [];
 
   const folders = path.join(process.cwd(), 'src', 'commands');
+
+   if (!existsSync(folders)) {
+    logger.warn(`⚠️ Pasta de comandos não encontrada: ${folders}`);
+    app.commands.clear();
+    return commands;
+  }
+
   const categories = readdirSync(folders);
+
+  app.commands.clear();
 
   if (settings.terminal.showSlashCommandsFiles) {
     logger.info('🔄 Iniciando o carregamento de comandos...');
@@ -40,7 +51,7 @@ export async function Commands(client: ExtendedClient) {
             const cmd = serialize(command);
 
             commands.push(cmd);
-            app.commands.add(entry.name, command);
+            app.commands.add(command as Command);
           }
 
           // Caso seja um arquivo, tratamos como comando único
@@ -57,7 +68,7 @@ export async function Commands(client: ExtendedClient) {
             const cmd = serialize(command);
 
             commands.push(cmd);
-            app.commands.add(cmd.name, command);
+            app.commands.add(command);
 
             if (settings.terminal.showSlashCommandsFiles) {
               logger.success(`📄 Comando carregado: ${cmd.name}`);
@@ -70,6 +81,17 @@ export async function Commands(client: ExtendedClient) {
     }),
   );
 
+  if (client) {
+    await registerCommands(client, commands)
+  }
+
+  return commands;
+}
+
+export async function registerCommands(
+  client: ExtendedClient,
+  commands: Serialized[]
+) {
   if (!process.env.TOKEN) {
     logger.error('O token não está definido no .env!');
     process.exit(1);
@@ -122,6 +144,11 @@ export async function Commands(client: ExtendedClient) {
   } catch (err) {
     console.error('❌ Erro ao registrar comandos:', err);
   }
+}
+
+export async function Commands(client: ExtendedClient) {
+  const commands = await loadCommands();
+  await registerCommands(client, commands);
 }
 
 function serialize(command: Command) {

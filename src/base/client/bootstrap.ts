@@ -1,11 +1,13 @@
 import { ExtendedClient, App } from "@base";
 import { logger } from "@utils";
+import { loadCommands, loadEvents } from "@modules";
 import { Router } from "./Interactions";
 
 const Bootstrap = {
   async init() {
     const client = new ExtendedClient();
-    const app = App.getInstance();
+    App.init(client);
+    client.on("interactionCreate", (interaction) => Router(interaction));
 
     try {
       if (!process.env.TOKEN) {
@@ -13,11 +15,9 @@ const Bootstrap = {
         process.exit(1);
       }
 
-      await app.events.load(client);
+      await loadEvents(client);
       await client.login(process.env.TOKEN);
-      await app.commands.load(client);
-
-      client.on("interactionCreate", (i) => Router(i, client));
+      await loadCommands(client);
       
     } catch (error) {
       console.error(error);

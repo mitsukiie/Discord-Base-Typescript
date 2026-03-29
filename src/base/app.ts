@@ -1,25 +1,39 @@
-import { CommandManager, EventManager, ResponderManager } from './client/index';
-import { CooldownManager } from './utils/Cooldown';
+import { ExtendedClient } from "@base";
+import { 
+  CommandManager,
+  EventManager,
+  ResponderManager,
+} from "@modules";
+import { CooldownManager } from "./utils/Cooldown";
 
 export class App {
   private static instance: App | null = null;
 
+  public readonly client: ExtendedClient;
   public readonly commands: CommandManager;
   public readonly cooldowns: CooldownManager;
   public readonly events: EventManager;
   public readonly responders: ResponderManager;
 
-  private constructor() {
+  private constructor(client: ExtendedClient) {
+    this.client = client;
     this.commands = new CommandManager();
     this.cooldowns = new CooldownManager();
     this.events = new EventManager();
     this.responders = new ResponderManager();
   }
 
-  public static getInstance() {
-    if (!App.instance) {
-      App.instance = new App();
+  public static init(client: ExtendedClient) {
+    if (!this.instance) {
+      this.instance = new App(client);
     }
-    return App.instance;
+    return this.instance;
+  }
+  
+  public static get() {
+    if (!this.instance) {
+      throw new Error('App não inicializado');
+    }
+    return this.instance;
   }
 }

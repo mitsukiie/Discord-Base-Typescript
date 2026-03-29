@@ -1,8 +1,8 @@
-import { App } from '@base';
 import { MessageFlags } from 'discord.js';
+import { App } from '@base';
 
-export async function Command(i: any, c: any) {
-  const app = App.getInstance();
+export async function Command(i: any) {
+  const app = App.get();
 
   const name = i.commandName;
   const id = i.user.id;
@@ -18,7 +18,7 @@ export async function Command(i: any, c: any) {
   }
 
   try {
-    await command.run(i, c);
+    await command.run(i, app.client);
     app.cooldowns.set(id, name, command.cooldown ?? undefined);
   } catch (err) {
     console.error(err);

@@ -101,7 +101,7 @@ function Creators() {
       const Type extends ResponderTypes,
       Parse extends ResponderParser<Path> | undefined = undefined,
     >(opts: Responder<Path, Type, Parse>) {
-      const app = App.getInstance();
+      const app = App.get();
       app.responders.register(opts);
       return opts;
     },

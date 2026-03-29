@@ -5,8 +5,6 @@ import {
   MessageContextMenuCommandInteraction,
   ContextMenuCommandInteraction,
   APIApplicationCommandOption,
-  ApplicationIntegrationType,
-  Locale,
   PermissionResolvable,
   PermissionFlagsBits,
 } from 'discord.js';

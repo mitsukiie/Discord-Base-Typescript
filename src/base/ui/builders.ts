@@ -1,4 +1,4 @@
-import { ButtonStyle, ChannelType, ContainerBuilder } from 'discord.js';
+import { ChannelType, ContainerBuilder, MessageFlags } from 'discord.js';
 
 import {
   AttachmentUrlString,
@@ -17,7 +17,6 @@ import {
   SectionOptions,
   SectionTexts,
   UserSelect,
-  UrlString,
   DisplayInput,
 } from '@types';
 
@@ -26,6 +25,8 @@ import {
   collectAttachmentsFromContainerInputs,
   collectAttachmentsFromDisplayInputs,
   createRenderedComponents,
+  getRenderedComponentsAttachments,
+  isRenderedComponents,
   RenderedComponents,
   toContainerChild,
   toDisplayComponents,
@@ -114,6 +115,20 @@ type ChannelSelectBuilderInput = SelectBuilderInput & {
 type StringSelectBuilderInput = SelectBuilderInput & {
   options: readonly StringSelectOption[];
 };
+
+export type MessageSendOptions = {
+  ephemeral?: boolean;
+  files?: readonly unknown[];
+};
+
+export type MessageSendPayload = MessageSendOptions & {
+  components: RenderedComponents;
+};
+
+export type ReplyableInteraction = {
+  reply(options: unknown): Promise<unknown>;
+};
+
 type SimpleSelectType =
   | UserSelect['type']
   | RoleSelect['type']
@@ -311,5 +326,26 @@ export const ui = {
     validate.components(rendered);
     const files = collectAttachmentsFromDisplayInputs(components);
     return createRenderedComponents(rendered, files);
+  },
+
+  send(interaction: ReplyableInteraction, payload: MessageSendPayload) {
+    if (!isRenderedComponents(payload.components)) {
+      throw new Error('Components must be created with ui.render(...).');
+    }
+
+    validate.components(payload.components);
+
+    const flags = payload.ephemeral
+      ? [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]
+      : [MessageFlags.IsComponentsV2];
+
+    const autoFiles = getRenderedComponentsAttachments(payload.components);
+    const files = [...autoFiles, ...(payload.files ?? [])];
+
+    return interaction.reply({
+      flags,
+      components: payload.components,
+      ...(files.length ? { files } : {}),
+    });
   },
 };
