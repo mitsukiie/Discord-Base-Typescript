@@ -1,5 +1,5 @@
 import { createCommand } from '@base';
-import { CommandType } from '@types';
+import { CommandType,TextSize, SeparatorSize } from '@types';
 import { ui } from '@ui';
 
 export default createCommand({
@@ -11,9 +11,9 @@ export default createCommand({
     const components = ui.render(
       ui.container(
         { color: '#0099ff' },
-        ui.text('## Container Example'),
+        ui.text('Container Example', { size: TextSize.Title }),
         ui.text('Mesma API, mas agrupando tudo em um ContainerBuilder.'),
-        ui.divider(),
+        ui.separator({ spacing: SeparatorSize.Large, divider: true }),
         ui.row(
           ui.button({
             label: 'Voltar',
